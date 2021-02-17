@@ -2,9 +2,10 @@ var express = require("express");
 var router = express.Router();
 const db = require("../config/database");
 
+
 /* GET home page. */
 router.get("/", function (req, res, next) {
-  const sqlInsert = "INSERT INTO cart (NumOfItems) VALUES ('10');";
+  const sqlInsert = "INSERT INTO cart (NumOfItems) VALUES ('15');";
   db.query(sqlInsert, (err, result) => {
     if (err) {
       res.send(err);
@@ -12,7 +13,7 @@ router.get("/", function (req, res, next) {
       res.send("Success");
     }
   });
-  // res.send('hi');
+  // res.send('his' );
 });
 
 module.exports = router;

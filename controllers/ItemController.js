@@ -1,4 +1,4 @@
-const ItemModel = require("../model/ItemModel");
+const ItemModel = require("../models/ItemModel");
 
 const getAllItems = (req, res) => {
   ItemModel.getAllItems()

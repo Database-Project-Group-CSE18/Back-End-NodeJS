@@ -24,7 +24,7 @@ CREATE TABLE `User` (
   `Email` varchar(30),
   `Phone_No` Numeric(10),
   `Cart_ID` int,
-  `Reg_Date` date,
+  `Reg_Date` DATETIME,
   PRIMARY KEY (`User_ID`),
 --   KEY `Fk` (`Cart_ID`)
   FOREIGN KEY(`Cart_ID`) references Cart(`Cart_ID`)
