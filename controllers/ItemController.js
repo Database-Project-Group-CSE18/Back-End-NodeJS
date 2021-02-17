@@ -1,5 +1,5 @@
 const ItemModel = require("../model/ItemModel");
-const db = require("../db/db");
+const db = require("../config/database");
 
 const getAllItems = (req, res) => {
   ItemModel.getAllItems()
