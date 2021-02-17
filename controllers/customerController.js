@@ -1,7 +1,7 @@
-const Customer = require('../model/customerModel');
+const Customer = require('../models/customerModel');
 
 
-const getAllAddress = (req, res, next) => {
+const getAllAddress = (req, res) => {
     
         // .then((employees) => {
         //     res.statusCode = 200;
@@ -9,6 +9,10 @@ const getAllAddress = (req, res, next) => {
         //     res.json(employees);
         // }, (err) => next(err))
         // .catch((err) => next(err));
+}
+
+const registerAction = (req, res) => {
+    
 }
 
 module.exports = {
