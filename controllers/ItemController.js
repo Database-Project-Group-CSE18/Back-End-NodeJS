@@ -1,8 +1,10 @@
 const ItemModel = require("../model/ItemModel");
+const db = require("../db/db");
 
 const getAllItems = (req, res) => {
   ItemModel.getAllItems()
     .then((items) => {
+      console.log(items);
       res.statusCode = 200;
       res.set("Content-Type", "application/json");
       res.json({ success: true, items: items });
