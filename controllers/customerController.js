@@ -1,16 +1,23 @@
+const { resourceUsage } = require('process');
 const Customer = require('../model/customerModel');
 
 
-const getAllAddress = (req, res, next) => {
+var loggedUser = 1;
+
+
+const getAddresses = (req,res,next)=>{
+    Customer.getAddressByUser(loggedUser)
+    .then((result)=>{
+        console.log(result)
+    }
+
+    )
     
-        // .then((employees) => {
-        //     res.statusCode = 200;
-        //     res.setHeader('Content-Type', 'application/json');
-        //     res.json(employees);
-        // }, (err) => next(err))
-        // .catch((err) => next(err));
+   
 }
 
+getAddresses();
+
 module.exports = {
-    getAllAddress
+    getAddresses
 }
