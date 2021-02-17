@@ -4,7 +4,8 @@ const db = require('../config/database');
 const getBankCards = (userID)=>{
 
     return new Promise((resolve, reject) => {
-        db.query("SELECT * FROM Bank_Card where User_ID = ?", [user_id],
+      const query = "SELECT * FROM Bank_Card where User_ID = ?";
+        db.query(query, [userID],
         (error, results, fields) => {
           if (!error) {
             resolve(results);
@@ -18,7 +19,8 @@ const getBankCards = (userID)=>{
 const insertBankCard = (bank_card)=>{
 
     return new Promise((resolve, reject) => {
-        db.query("INSERT INTO Bank_Card (Card_Number,User_ID,Bank_Name,Owner,CVV,Exp_Date) VALUES (?,?,?,?,?,?)", [bank_card.Card_Number,bank_card.User_ID,bank_card.Bank_Name,bank_card.Owner,bank_card.CVV,bank_card.Exp_Date],
+      const query = "INSERT INTO Bank_Card (Card_Number,User_ID,Bank_Name,Owner,CVV,Exp_Date) VALUES (?,?,?,?,?,?)";
+        db.query(query, [bank_card.Card_Number,bank_card.User_ID,bank_card.Bank_Name,bank_card.Owner,bank_card.CVV,bank_card.Exp_Date],
         (error, results, fields) => {
           if (!error) {
             resolve(results);
@@ -33,7 +35,8 @@ const insertBankCard = (bank_card)=>{
 const deleteBankCard = (card_number)=>{
 
     return new Promise((resolve, reject) => {
-        db.query("DELETE FROM Bank_Card WHERE card_number = ?", [card_number],
+      const query = "DELETE FROM Bank_Card WHERE card_number = ?"
+        db.query(query, [card_number],
         (error, results, fields) => {
           if (!error) {
             resolve(results);
