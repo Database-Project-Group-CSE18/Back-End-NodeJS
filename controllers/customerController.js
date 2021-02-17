@@ -10,10 +10,7 @@ const getAddresses = (req,res,next)=>{
     .then((result)=>{
         console.log(result)
     }
-
-    )
-    
-   
+    )   
 }
 
 getAddresses();
