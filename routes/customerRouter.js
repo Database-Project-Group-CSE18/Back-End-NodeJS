@@ -7,9 +7,11 @@ var router = express.Router();
 router.use(bodyParser.json());
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
+router.get('/', function(req, res) {
   res.send('respond with a resource');
 });
+
+router.get('/addresses',customerController.getAddresses)
 
 module.exports = router;
 
