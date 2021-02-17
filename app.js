@@ -35,7 +35,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // Redirect to routes
 app.use('/', indexRouter);
-app.use('/users', customerRouter);
+app.use('/customer', customerRouter);
 app.use('/seller', sellerRouter);
 app.use('/items', itemRouter);
 
