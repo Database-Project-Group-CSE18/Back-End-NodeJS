@@ -1,12 +1,13 @@
 var createError = require('http-errors');
 var express = require('express');
+var cors = require('cors');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 // Route files
 var indexRouter = require('./routes');
-var customerRouter = require('./routes/customerRouter');
+var customerRouter = require('./routes/customer');
 var sellerRouter = require('./routes/seller');
 
 var app = express();
@@ -16,7 +17,14 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 app.use(logger('dev'));
+
+// This is to allow our api for cross-origin resource sharing (To communicate with front end. It is in another server)
+app.use(cors());
+
+// This is to allow our api for parsing json
 app.use(express.json());
+
+// This is to allow our api to receive data from client app(front end)
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
@@ -42,4 +50,5 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+// This allows us to use this file in anywhere else by importing
 module.exports = app;
