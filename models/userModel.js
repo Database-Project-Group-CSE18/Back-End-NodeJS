@@ -1,5 +1,24 @@
 const db = require('../config/database');
 
+
+
+function registerCustomer(useType, firstName, lastName, email, phoneNo, password, regDate) {
+    const sqlInsert = "INSERT INTO user (user_type, first_name, last_name, email, phone_no, password, cart_id, reg_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+    return new Promise((resolve, reject) => {
+        db.query(sqlInsert, 
+            [useType, firstName, lastName, email, phoneNo, password, 1, regDate],
+            (error, result) => {
+                if (!!error) {
+                    console.log(error);
+                    reject(error);
+                } else {
+                    resolve(result);
+                }
+            }
+            )
+    })
+}
+
 const getUserDetails = (userID)=>{
 
     return new Promise((resolve, reject) => {
@@ -51,6 +70,7 @@ const updatePassword  = (pwd)=>{
 
 
 module.exports = {
+    registerCustomer,
     getUserDetails,
     updateUserDetails,
     updatePassword
