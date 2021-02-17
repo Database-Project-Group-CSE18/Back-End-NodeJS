@@ -1,5 +1,10 @@
 var express = require('express');
+const bodyParser = require('body-parser');
+const customerController = require('../controllers/customerController');
+
 var router = express.Router();
+
+router.use(bodyParser.json());
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -7,4 +12,6 @@ router.get('/', function(req, res, next) {
 });
 
 module.exports = router;
+
+
 

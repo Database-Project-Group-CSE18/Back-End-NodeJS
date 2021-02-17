@@ -1,14 +1,14 @@
 var createError = require("http-errors");
 var express = require("express");
-// var cors = require("cors");
+var cors = require("cors");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 
 // Route files
-var indexRouter = require("./routes");
-var customerRouter = require("./routes/customerRouter");
-var sellerRouter = require("./routes/seller");
+var indexRouter = require('./routes');
+var customerRouter = require('./routes/customer');
+var sellerRouter = require('./routes/seller');
 
 var app = express();
 
