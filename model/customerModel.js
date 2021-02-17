@@ -1,5 +1,5 @@
 const { async } = require('rxjs');
-const db = require('../db/db');
+const db = require('../config/database');
 
 
 //user details
