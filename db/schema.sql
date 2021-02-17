@@ -6,6 +6,8 @@ CREATE TABLE `Item` (
   `Category` Varchar(20),
   `Description` Varchar(200),
   `Status` Varchar(10),
+  `Price` Float,
+  `Image` blob,
   PRIMARY KEY (`Item_ID`)
 );
 
@@ -66,7 +68,7 @@ CREATE TABLE `Order` (
   `User_ID` int,
   `Address_ID` int,
   `Order_status` Varchar(15),
-  `Card_Number` int,
+  `Card_Number` Varchar(20),
   `Ordered_date` date,
   `Tracking _Number` varchar(10),
   PRIMARY KEY (`Order_ID`),
@@ -169,7 +171,7 @@ CREATE TABLE `Reply` (
 
 -- insert statements
 
-INSERT INTO Item(Num_of_orders,Item_name,Category,Description,Status) VALUES(2,'BOTTLE','STATIONERY','ABCABC','AVAILABLE');
+INSERT INTO Item(Num_of_orders,Item_name,Category,Description,Status, Price) VALUES(2,'BOTTLE','STATIONERY','ABCABC','AVAILABLE', 200);
 
 INSERT INTO Cart(NumOfItems) VALUES(2);
 
@@ -181,4 +183,25 @@ INSERT INTO `Address`(User_ID,First_Name,Last_Name,Street,City,State,ZIP) VALUES
 INSERT INTO Bank_Card(Card_Number,User_ID,Bank_Name,Owner,CVV,Exp_Date) VALUES('123456789012',1,'Commercial Bank','Pasan madushan','123','2021-12-12');
 INSERT INTO Bank_Card(Card_Number,User_ID,Bank_Name,Owner,CVV,Exp_Date) VALUES('098765432123',1,'NDB','Vimukthi madushan','987','2021-12-12');
 
+INSERT INTO variant(Item_ID,Variant_name,Price,Color,Size,SpecificDetail, Quantity) VALUES(1,'Pink',600,'pink','1500ml','none', 30);
+INSERT INTO variant(Item_ID,Variant_name,Price,Color,Size,SpecificDetail, Quantity) VALUES(1,'Blue',750,'blue','2200ml','none', 40);
+
+INSERT INTO `order`
+(`User_ID`,
+`Address_ID`,
+`Order_status`,
+`Card_Number`,
+`Ordered_date`,
+`Tracking _Number`)
+VALUES
+(1,
+2,
+"Shipped",
+"2345123456783456",
+"2020/01/02",
+"23223");
+
+INSERT INTO feedback(User_ID,Item_ID,Order_ID,Rate,Comment) VALUES(1,1,1,4,'nice');
+INSERT INTO feedback(User_ID,Item_ID,Order_ID,Rate,Comment) VALUES(1,1,1,1,'not recived');
+INSERT INTO feedback(User_ID,Item_ID,Order_ID,Rate,Comment) VALUES(1,1,1,5,'Fast shipping');
 
