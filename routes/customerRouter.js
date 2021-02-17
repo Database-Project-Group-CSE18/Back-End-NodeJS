@@ -11,7 +11,16 @@ router.get('/', function(req, res) {
   res.send('respond with a resource');
 });
 
-router.get('/addresses',customerController.getAddresses)
+//address routes
+router.get('/addresses',customerController.getAddressesAction)
+router.post('/addresses',customerController.insertAddressAction)
+router.delete('/addresses',customerController.deleteAddressAction)
+
+//bank card routes
+router.get('/bankCards',customerController.getBankCardsAction)
+router.post('/bankCards',customerController.insertBankCardsAction)
+router.delete('/bankCards',customerController.deleteBankCardAction)
+
 
 module.exports = router;
 
