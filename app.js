@@ -24,6 +24,7 @@ app.use(logger("dev"));
 app.use(cors());
 
 // This is to allow our api for parsing json
+// express.json() is a method inbuilt in express to recognize the incoming Request Object as a JSON Object
 app.use(express.json());
 
 // This is to allow our api to receive data from client app(front end)
