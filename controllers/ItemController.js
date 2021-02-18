@@ -15,6 +15,7 @@ const getAllItems = (req, res) => {
     });
 };
 
+
 const getItemsByCategory = (req, res) => {
     ItemModel.getItemsByCategory(req.params.category)
       .then((items) => {

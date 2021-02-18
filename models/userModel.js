@@ -1,7 +1,5 @@
 const db = require('../config/database');
 
-
-
 function registerCustomer(useType, firstName, lastName, email, phoneNo, password, regDate) {
     const sqlInsert = "INSERT INTO user (user_type, first_name, last_name, email, phone_no, password, cart_id, reg_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
     return new Promise((resolve, reject) => {

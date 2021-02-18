@@ -14,7 +14,6 @@ const getAddressByUser = (user_id) => {
     });
   }
   
-
 const insertAddress = (address)=>{
     return new Promise((resolve, reject) => {
         db.query("INSERT INTO Address (User_ID,First_Name,Last_Name,Street,City,State,ZIP) VALUES (?,?,?,?,?,?,?)", [address.User_ID,address.First_Name,address.Last_Name,address.Street,address.City,address.State,address.ZIP],

@@ -1,6 +1,5 @@
 const db = require('../config/database');
 
-
 const updateOrderStatus = async(order_id,new_status)=>{
 
     return new Promise((resolve, reject) => {

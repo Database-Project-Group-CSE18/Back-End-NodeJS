@@ -1,6 +1,5 @@
 const db = require('../config/database');
 
-
 const getBankCards = (userID)=>{
 
     return new Promise((resolve, reject) => {

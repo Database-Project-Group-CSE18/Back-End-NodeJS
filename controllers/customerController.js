@@ -4,6 +4,7 @@ var loggedUser = 1;
 
 const registerAction = (req, res) => {
   console.log("register is called");
+  
   let date_ob = new Date();
 
   // current date

@@ -62,7 +62,6 @@ CREATE TABLE `Variant` (
   FOREIGN KEY (`Item_ID`) references Item(`Item_ID`)
 );
 
-
 CREATE TABLE `Order` (
   `Order_ID` int not null auto_increment,
   `User_ID` int,

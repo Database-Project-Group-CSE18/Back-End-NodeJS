@@ -13,7 +13,7 @@ router.get("/", function (req, res) {
   //     res.send("Success");
   //   }
   // });
-  res.send('his' );
+  // res.send('his' );
 });
 
 module.exports = router;
