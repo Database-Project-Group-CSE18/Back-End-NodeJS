@@ -1,9 +1,8 @@
-const { resourceUsage } = require('process');
-const Address = require('../model/addressModel');
-const BankCard  = require('../model/bankCardModel');
+const Address = require('../models/addressModel');
+const BankCard  = require('../models/bankCardModel');
 const Customer = require("../models/userModel");
 
-var loggedUser = 1;
+var loggedUser = 2;
 
 
 
@@ -98,11 +97,13 @@ const getAddressesAction = (req,res)=>{
 
 //should get address from request
 const insertAddressAction = (req,res)=>{
-    Address.insertAddress(req.body.addresses)
+    // console.log(req.body.Address)
+    Address.insertAddress(req.body.Address,loggedUser)
     .then((success)=>{
+        // console.log(success.insertId);
         res.statusCode = 200;
         res.set("Content-Type", "application/json");
-        res.json({ success: true});
+        res.json({ success: true, insertId:success.insertId});
     })
     .catch((err) => {
         res.statusCode = 500;
@@ -113,7 +114,8 @@ const insertAddressAction = (req,res)=>{
 
  
 const deleteAddressAction  = (req,res)=>{
-    Address.deleteAddress(req.body.Address_ID)
+    console.log(req.body);
+    Address.deleteAddress(req.body.id)
     .then((success)=>{
         res.statusCode = 200;
         res.set("Content-Type", "application/json");
@@ -146,7 +148,7 @@ const getBankCardsAction = (req,res)=>{
 
 //should get bank card details from request
 const insertBankCardsAction = (req,res)=>{
-    BankCard.insertBankCard(req.body.cardDetails)
+    BankCard.insertBankCard(req.body.CardDetails,loggedUser)
     .then((success)=>{
         res.statusCode = 200;
         res.set("Content-Type", "application/json");
@@ -162,7 +164,80 @@ const insertBankCardsAction = (req,res)=>{
 
 const deleteBankCardAction  = (req,res)=>{
     console.log(req.body);
-    BankCard.deleteBankCard(req.body.Card_Number)
+    BankCard.deleteBankCard(req.body.cardNumber)
+    .then((success)=>{
+        res.statusCode = 200;
+        res.set("Content-Type", "application/json");
+        res.json({ success: true});
+    })
+    .catch((err) => {
+        res.statusCode = 500;
+        res.set("Content-Type", "application/json");
+        res.json({ success: false, message: err });
+      }); 
+}
+
+
+//Customer details controllers
+
+const getUserDetails = (req,res)=>{
+    Customer.getUserDetails(loggedUser)
+    .then((user)=>{  
+        Customer.getOrderNumbers(loggedUser).then(
+            (det)=>{  
+                console.log(det,user);
+                res.statusCode = 200;
+                res.set("Content-Type", "application/json");
+                res.json({ success: true, user: user, det:det});
+            })
+            .catch((err) => {
+                res.statusCode = 500;
+                res.set("Content-Type", "application/json");
+                res.json({ success: false, message: err });
+              });   
+        
+    })
+    .catch((err) => {
+        res.statusCode = 500;
+        res.set("Content-Type", "application/json");
+        res.json({ success: false, message: err });
+      });      
+}
+
+
+
+const updateUserDetailsAction  = (req,res)=>{
+    Customer.updateUserDetails(req.body,loggedUser)
+    .then((success)=>{
+        res.statusCode = 200;
+        res.set("Content-Type", "application/json");
+        res.json({ success: true});
+    })
+    .catch((err) => {
+        res.statusCode = 500;
+        res.set("Content-Type", "application/json");
+        res.json({ success: false, message: err });
+      }); 
+}
+
+const getPwdAction = (req,res)=>{
+    Customer.getPwd(loggedUser)
+    .then((pwd)=>{
+        res.statusCode = 200;
+        res.set("Content-Type", "application/json");
+        res.json({ success: true, pwd:pwd});
+    })
+    .catch((err) => {
+        res.statusCode = 500;
+        res.set("Content-Type", "application/json");
+        res.json({ success: false, message: err });
+      }); 
+}
+
+
+const updatePasswordAction = (req,res)=>{
+    console.log(req.body);
+    Customer.updatePassword(req.body.newpwd,loggedUser)
     .then((success)=>{
         res.statusCode = 200;
         res.set("Content-Type", "application/json");
@@ -177,7 +252,6 @@ const deleteBankCardAction  = (req,res)=>{
 
 
 
-
 module.exports = {
     registerAction,
     getAddressesAction,
@@ -185,7 +259,11 @@ module.exports = {
     deleteAddressAction,
     getBankCardsAction,
     insertBankCardsAction,
-    deleteBankCardAction
+    deleteBankCardAction,
+    updateUserDetailsAction,
+    getUserDetails,
+    updatePasswordAction,
+    getPwdAction
 
 };
 
