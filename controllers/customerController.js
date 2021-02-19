@@ -204,14 +204,9 @@ const getUserDetails = (req,res)=>{
       });      
 }
 
-const arrageOrderDet =(det)=>{
-
-}
-
 
 
 const updateUserDetailsAction  = (req,res)=>{
-    // console.log(req.body)
     Customer.updateUserDetails(req.body,loggedUser)
     .then((success)=>{
         res.statusCode = 200;

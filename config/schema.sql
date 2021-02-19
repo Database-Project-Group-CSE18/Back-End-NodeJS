@@ -116,7 +116,6 @@ CREATE TABLE `Order_Item` (
 );
 
 
-
 CREATE TABLE `Image` (
   `Image_ID` int not null auto_increment,
   `Variant_ID` int,
