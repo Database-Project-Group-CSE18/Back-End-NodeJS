@@ -211,6 +211,7 @@ const arrageOrderDet =(det)=>{
 
 
 const updateUserDetailsAction  = (req,res)=>{
+    // console.log(req.body)
     Customer.updateUserDetails(req.body,loggedUser)
     .then((success)=>{
         res.statusCode = 200;
@@ -224,8 +225,24 @@ const updateUserDetailsAction  = (req,res)=>{
       }); 
 }
 
+const getPwdAction = (req,res)=>{
+    Customer.getPwd(loggedUser)
+    .then((pwd)=>{
+        res.statusCode = 200;
+        res.set("Content-Type", "application/json");
+        res.json({ success: true, pwd:pwd});
+    })
+    .catch((err) => {
+        res.statusCode = 500;
+        res.set("Content-Type", "application/json");
+        res.json({ success: false, message: err });
+      }); 
+}
+
+
 const updatePasswordAction = (req,res)=>{
-    Customer.updatePassword(req.body.password,loggedUser)
+    console.log(req.body);
+    Customer.updatePassword(req.body.newpwd,loggedUser)
     .then((success)=>{
         res.statusCode = 200;
         res.set("Content-Type", "application/json");
@@ -250,7 +267,8 @@ module.exports = {
     deleteBankCardAction,
     updateUserDetailsAction,
     getUserDetails,
-    updatePasswordAction
+    updatePasswordAction,
+    getPwdAction
 
 };
 

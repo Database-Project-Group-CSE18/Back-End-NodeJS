@@ -26,5 +26,6 @@ router.post("/register", customerController.registerAction);
 router.get("/user",customerController.getUserDetails)
 router.put("/user",customerController.updateUserDetailsAction)
 router.put("/userpwd",customerController.updatePasswordAction)
+router.get("/userpwd",customerController.getPwdAction)
 
 module.exports = router;

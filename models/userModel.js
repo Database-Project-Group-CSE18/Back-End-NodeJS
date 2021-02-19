@@ -22,7 +22,7 @@ function registerCustomer(useType, firstName, lastName, email, phoneNo, password
 const getUserDetails = (userID)=>{
 
     return new Promise((resolve, reject) => {
-      query = "select First_Name,Last_Name from `User` where User_ID=?";
+      const query = "select * from `User` where User_ID=?";
         db.query(query, [userID],
         (error, results, fields) => {
           if (!error) {
@@ -37,7 +37,7 @@ const getUserDetails = (userID)=>{
 
 const getOrderNumbers = (userID) =>{
   return new Promise((resolve, reject) => {
-    query = "select Order_status,count(Order_ID) from `Order` where User_ID=?  group by Order_status";
+    const query = "select Order_status,count(Order_ID) from `Order` where User_ID=?  group by Order_status";
       db.query(query, [userID],
       (error, results, fields) => {
         if (!error) {
@@ -58,22 +58,41 @@ const getOrderNumbers = (userID) =>{
 const updateUserDetails = (user,loggedUser)=>{
     console.log(user)
     return new Promise((resolve, reject) => {
-        console.log(loggedUser);
-        db.query("UPDATE User SET First_name = ? , Last_name = ? , Email = ? , Phone_No = ?  where User_ID = ?", [user.First_Name,user.Last_Name,user.Email,user.Phone_No,loggedUser],
+      const query = "UPDATE User SET First_name = ? , Last_name = ? , Email = ? , Phone_No = ?  where User_ID = ?";
+        // console.log(loggedUser);
+        db.query(query, [user.firstname,user.lastname,user.Email,parseInt(user.telephone),loggedUser],
         (error, results, fields) => {
           if (!error) {
             resolve(results);
           } else {
+            console.log("query error")
             reject(error);
           }
         });
       });
 }
 
+const getPwd = (loggedUser)=>{
+  return new Promise((resolve, reject) => {
+    const query = "SELECT Password FROM User WHERE User_ID = ? ";
+      db.query(query, [loggedUser],
+      (error, results, fields) => {
+        if (!error) {
+          resolve(results);
+        } else {
+          reject(error);
+        }
+      });
+    });
+  
+
+}
+
 const updatePassword  = (pwd,loggedUser)=>{
 
     return new Promise((resolve, reject) => {
-        db.query("UPDATE User SET Password = ? ", [pwd,loggedUser],
+      const query = "UPDATE User SET Password = ? ";
+        db.query(query, [pwd,loggedUser],
         (error, results, fields) => {
           if (!error) {
             resolve(results);
@@ -91,6 +110,7 @@ module.exports = {
     getUserDetails,
     updateUserDetails,
     updatePassword,
-    getOrderNumbers
+    getOrderNumbers,
+    getPwd
 }
 
