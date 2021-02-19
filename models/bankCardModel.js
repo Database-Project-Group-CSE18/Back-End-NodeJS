@@ -16,15 +16,16 @@ const getBankCards = (userID)=>{
       });
 }
 
-const insertBankCard = (bank_card)=>{
-
+const insertBankCard = (bank_card,loggedUser)=>{
+    console.log(bank_card,loggedUser);
     return new Promise((resolve, reject) => {
       const query = "INSERT INTO Bank_Card (Card_Number,User_ID,Bank_Name,Owner,CVV,Exp_Date) VALUES (?,?,?,?,?,?)";
-        db.query(query, [bank_card.Card_Number,bank_card.User_ID,bank_card.Bank_Name,bank_card.Owner,bank_card.CVV,bank_card.Exp_Date],
+        db.query(query, [bank_card.Card_Number,loggedUser,bank_card.Bank_Name,bank_card.Owner,bank_card.CVV,bank_card.Exp_Date],
         (error, results, fields) => {
           if (!error) {
             resolve(results);
           } else {
+            console.log("query error");
             reject(error);
           }
         });

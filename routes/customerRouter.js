@@ -20,6 +20,11 @@ router.get('/bankCards',customerController.getBankCardsAction)
 router.post('/bankCards',customerController.insertBankCardsAction)
 router.delete('/bankCards',customerController.deleteBankCardAction)
 
+//user routes
 router.post("/register", customerController.registerAction);
+
+router.get("/user",customerController.getUserDetails)
+router.put("/user",customerController.updateUserDetailsAction)
+router.put("/userpwd",customerController.updatePasswordAction)
 
 module.exports = router;
