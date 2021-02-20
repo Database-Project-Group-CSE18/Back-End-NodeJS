@@ -10,6 +10,7 @@ var indexRouter = require('./routes');
 var customerRouter = require('./routes/customerRouter');
 var sellerRouter = require('./routes/sellerRouter');
 var itemRouter = require('./routes/item');
+var orderRouter = require('./routes/order');
 
 var app = express();
 
@@ -20,7 +21,7 @@ app.set("view engine", "jade");
 app.use(logger("dev"));
 
 // This is to allow our api for cross-origin resource sharing (To communicate with front end. It is in another server)
-// app.use(cors());
+app.use(cors());
 
 // This is to allow our api for parsing json
 app.use(express.json());
@@ -37,6 +38,7 @@ app.use('/', indexRouter);
 app.use('/users', customerRouter);
 app.use('/seller', sellerRouter);
 app.use('/items', itemRouter);
+app.use('/orders', orderRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

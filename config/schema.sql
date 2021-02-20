@@ -57,11 +57,24 @@ CREATE TABLE `Variant` (
   `Size` Varchar(10),
   `SpecificDetail` Varchar(20),
   `Quantity` Numeric(4),
+  `Image` blob,
   PRIMARY KEY (`Variant_ID`),
 --   KEY `Fk` (`Item_ID`)
   FOREIGN KEY (`Item_ID`) references Item(`Item_ID`)
 );
 
+CREATE TABLE `Order_Address` (
+  `Address_ID` int,
+  `First Name` Varchar(20),
+  `Last_Name` Varchar(20),
+  `State` Varchar(20),
+  `Number` Varchar(6),
+  `City` Varchar(20),
+  `Street` Varchar(20),
+  `ZIP` Varchar(10),
+  PRIMARY KEY (`Address_ID`)
+--   KEY `Fk` (`Order_ID`),
+);
 
 CREATE TABLE `Order` (
   `Order_ID` int not null auto_increment,
@@ -74,7 +87,7 @@ CREATE TABLE `Order` (
   PRIMARY KEY (`Order_ID`),
 --   KEY `Fk` (`Customer_ID`, `Address_ID`)
   FOREIGN KEY (`User_ID`) references User(`User_ID`),
-  FOREIGN KEY (`Address_ID`) references Address(`Address_ID`)
+  FOREIGN KEY (`Address_ID`) references Order_Address(`Address_ID`)
 );
 
 CREATE TABLE `Order_Item` (
@@ -101,31 +114,6 @@ CREATE TABLE `Bank_Card` (
 
 );
 
-CREATE TABLE `Image` (
-  `Image_ID` int not null auto_increment,
-  `Variant_ID` int,
-  `Image` Blob,
-  PRIMARY KEY (`Image_ID`),
---   KEY `Fk` (`Variant_ID`),
-  FOREIGN KEY (`Variant_ID`) references Variant(`Variant_ID`)
-
-
-);
-
-CREATE TABLE `Order_Address` (
-  `Address_ID` int,
-  `Order_ID` int,
-  `First Name` Varchar(20),
-  `Last_Name` Varchar(20),
-  `State` Varchar(20),
-  `Number` Varchar(6),
-  `City` Varchar(20),
-  `Street` Varchar(20),
-  `ZIP` Varchar(10),
-  PRIMARY KEY (`Address_ID`),
---   KEY `Fk` (`Order_ID`),
-  FOREIGN KEY(`Order_ID`) references `Order`(`Order_ID`)
-);
 
 
 
@@ -186,6 +174,28 @@ INSERT INTO Bank_Card(Card_Number,User_ID,Bank_Name,Owner,CVV,Exp_Date) VALUES('
 INSERT INTO variant(Item_ID,Variant_name,Price,Color,Size,SpecificDetail, Quantity) VALUES(1,'Pink',600,'pink','1500ml','none', 30);
 INSERT INTO variant(Item_ID,Variant_name,Price,Color,Size,SpecificDetail, Quantity) VALUES(1,'Blue',750,'blue','2200ml','none', 40);
 
+
+INSERT INTO `Order_Address`
+(
+  `Address_ID`,
+  `First Name`,
+  `Last_Name`,
+  `State`,
+  `Number`,
+  `City`,
+  `Street`,
+  `ZIP`
+)
+VALUES
+(1,
+"Chandima",
+"Amarasena",
+"western",
+"No.231",
+"Peliyagoda",
+"Dutugemunu Mv",
+"11830");
+
 INSERT INTO `order`
 (`User_ID`,
 `Address_ID`,
@@ -195,7 +205,7 @@ INSERT INTO `order`
 `Tracking _Number`)
 VALUES
 (1,
-2,
+1,
 "Shipped",
 "2345123456783456",
 "2020/01/02",
@@ -205,3 +215,5 @@ INSERT INTO feedback(User_ID,Item_ID,Order_ID,Rate,Comment) VALUES(1,1,1,4,'nice
 INSERT INTO feedback(User_ID,Item_ID,Order_ID,Rate,Comment) VALUES(1,1,1,1,'not recived');
 INSERT INTO feedback(User_ID,Item_ID,Order_ID,Rate,Comment) VALUES(1,1,1,5,'Fast shipping');
 
+INSERT INTO cart_item(Cart_ID, Variant_ID, Quantity) VALUES (1,1,6);
+INSERT INTO cart_item(Cart_ID, Variant_ID, Quantity) VALUES (1,2,5);
