@@ -26,7 +26,7 @@ CREATE TABLE `User` (
   `Email` varchar(30),
   `Phone_No` Numeric(10),
   `Cart_ID` int,
-  `Reg_Date` date,
+  `Reg_Date` DATETIME,
   PRIMARY KEY (`User_ID`),
 --   KEY `Fk` (`Cart_ID`)
   FOREIGN KEY(`Cart_ID`) references Cart(`Cart_ID`)
@@ -63,9 +63,23 @@ CREATE TABLE `Variant` (
   FOREIGN KEY (`Item_ID`) references Item(`Item_ID`)
 );
 
+CREATE TABLE `Bank_Card` (
+  `Card_Number` Varchar(40) not null,
+  `User_ID` int,
+  `Bank_Name` Varchar(20),
+  `Owner` Varchar(40),
+  `CVV` Varchar(10),
+  `Exp_Date` Varchar(20),      -- Date changed as varchar : inserting error
+  PRIMARY KEY (`Card_Number`),
+--   KEY `Fk` (`Customer_ID`)
+  FOREIGN KEY (`User_ID`) references User(`User_ID`)
+
+);
+
+
 CREATE TABLE `Order_Address` (
   `Address_ID` int,
-  `First Name` Varchar(20),
+  `First_Name` Varchar(20),
   `Last_Name` Varchar(20),
   `State` Varchar(20),
   `Number` Varchar(6),
@@ -101,18 +115,6 @@ CREATE TABLE `Order_Item` (
   FOREIGN KEY (`Variant_ID`) references `Variant`(`Variant_ID`)
 );
 
-CREATE TABLE `Bank_Card` (
-  `Card_Number` Varchar(40) not null,
-  `User_ID` int,
-  `Bank_Name` Varchar(20),
-  `Owner` Varchar(40),
-  `CVV` Varchar(10),
-  `Exp_Date` Date,
-  PRIMARY KEY (`Card_Number`),
---   KEY `Fk` (`Customer_ID`)
-  FOREIGN KEY (`User_ID`) references User(`User_ID`)
-
-);
 
 
 
