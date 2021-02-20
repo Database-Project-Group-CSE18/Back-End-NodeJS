@@ -72,21 +72,7 @@ function loginCustomer(email, password) {
 }
 
 
-const getUserDetails = (userID)=>{
 
-    return new Promise((resolve, reject) => {
-      const query = "select * from `User` where User_ID=?";
-        db.query(query, [userID],
-        (error, results, fields) => {
-          if (!error) {
-            resolve(results);
-            
-          } else {
-            reject(error);
-          }
-        });
-      });
-}
 
 const getOrderNumbers = (userID) =>{
   return new Promise((resolve, reject) => {
