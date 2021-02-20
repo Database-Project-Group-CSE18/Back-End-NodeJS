@@ -62,6 +62,34 @@ CREATE TABLE `Variant` (
   FOREIGN KEY (`Item_ID`) references Item(`Item_ID`)
 );
 
+CREATE TABLE `Bank_Card` (
+  `Card_Number` Varchar(40) not null,
+  `User_ID` int,
+  `Bank_Name` Varchar(20),
+  `Owner` Varchar(40),
+  `CVV` Varchar(10),
+  `Exp_Date` Varchar(20),      -- Date changed as varchar : inserting error
+  PRIMARY KEY (`Card_Number`),
+--   KEY `Fk` (`Customer_ID`)
+  FOREIGN KEY (`User_ID`) references User(`User_ID`)
+
+);
+
+
+CREATE TABLE `Order_Address` (
+  `Address_ID` int,
+  `First_Name` Varchar(20),
+  `Last_Name` Varchar(20),
+  `State` Varchar(20),
+  `Number` Varchar(6),
+  `City` Varchar(20),
+  `Street` Varchar(20),
+  `ZIP` Varchar(10),
+  PRIMARY KEY (`Address_ID`),
+--   KEY `Fk` (`Order_ID`),
+);
+
+
 CREATE TABLE `Order` (
   `Order_ID` int not null auto_increment,
   `User_ID` int,
@@ -73,7 +101,7 @@ CREATE TABLE `Order` (
   PRIMARY KEY (`Order_ID`),
 --   KEY `Fk` (`Customer_ID`, `Address_ID`)
   FOREIGN KEY (`User_ID`) references User(`User_ID`),
-  FOREIGN KEY (`Address_ID`) references Address(`Address_ID`)
+  FOREIGN KEY (`Address_ID`) references Order_Address(`Address_ID`)
 );
 
 CREATE TABLE `Order_Item` (
@@ -87,18 +115,6 @@ CREATE TABLE `Order_Item` (
   FOREIGN KEY (`Variant_ID`) references `Variant`(`Variant_ID`)
 );
 
-CREATE TABLE `Bank_Card` (
-  `Card_Number` Varchar(40) not null,
-  `User_ID` int,
-  `Bank_Name` Varchar(20),
-  `Owner` Varchar(40),
-  `CVV` Varchar(10),
-  `Exp_Date` Date,
-  PRIMARY KEY (`Card_Number`),
---   KEY `Fk` (`Customer_ID`)
-  FOREIGN KEY (`User_ID`) references User(`User_ID`)
-
-);
 
 CREATE TABLE `Image` (
   `Image_ID` int not null auto_increment,
@@ -109,21 +125,6 @@ CREATE TABLE `Image` (
   FOREIGN KEY (`Variant_ID`) references Variant(`Variant_ID`)
 
 
-);
-
-CREATE TABLE `Order_Address` (
-  `Address_ID` int,
-  `Order_ID` int,
-  `First Name` Varchar(20),
-  `Last_Name` Varchar(20),
-  `State` Varchar(20),
-  `Number` Varchar(6),
-  `City` Varchar(20),
-  `Street` Varchar(20),
-  `ZIP` Varchar(10),
-  PRIMARY KEY (`Address_ID`),
---   KEY `Fk` (`Order_ID`),
-  FOREIGN KEY(`Order_ID`) references `Order`(`Order_ID`)
 );
 
 

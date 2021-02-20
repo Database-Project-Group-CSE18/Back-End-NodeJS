@@ -71,6 +71,63 @@ function loginCustomer(email, password) {
   });
 }
 
+
+const getUserDetails = (userID)=>{
+
+    return new Promise((resolve, reject) => {
+      const query = "select * from `User` where User_ID=?";
+        db.query(query, [userID],
+        (error, results, fields) => {
+          if (!error) {
+            resolve(results);
+            
+          } else {
+            reject(error);
+          }
+        });
+      });
+}
+
+const getOrderNumbers = (userID) =>{
+  return new Promise((resolve, reject) => {
+    const query = "select Order_status,count(Order_ID) from `Order` where User_ID=?  group by Order_status";
+      db.query(query, [userID],
+      (error, results, fields) => {
+        if (!error) {
+          resolve(results);
+          
+        } else {
+          reject(error);
+        }
+      });
+    });
+}
+
+// const query1 = "SELECT * FROM User where User_ID = ?";
+// const query2 = "select Order_status,count(Order_ID) from `Order` where User_ID=? group by Order_status;"
+// select First_Name,Last_Name,Order_status,count(Order_ID) from `User` natural join `Order` where User_ID=1 group by Order_status;
+
+
+
+const getPwd = (loggedUser)=>{
+  return new Promise((resolve, reject) => {
+    const query = "SELECT Password FROM User WHERE User_ID = ? ";
+      db.query(query, [loggedUser],
+      (error, results, fields) => {
+        if (!error) {
+          resolve(results);
+        } else {
+          reject(error);
+        }
+      });
+    });
+  
+
+}
+
+
+          
+
 const getUserDetails = (userID) => {
   return new Promise((resolve, reject) => {
     db.query(
@@ -123,10 +180,13 @@ const updatePassword = (pwd) => {
   });
 };
 
+
 module.exports = {
   registerCustomer,
   loginCustomer,
   getUserDetails,
   updateUserDetails,
   updatePassword,
+  getOrderNumbers,
+    getPwd
 };
