@@ -1,6 +1,7 @@
 const Address = require('../models/addressModel');
 const BankCard  = require('../models/bankCardModel');
 const Customer = require("../models/userModel");
+const Order = require("../models/orderModel");
 const jwt = require("jsonwebtoken");
 const authentication = require("../middleware/Authentication");
 
@@ -324,6 +325,56 @@ const updatePasswordAction = (req,res)=>{
 
 
 
+// Order Details
+
+const getAllOrdersAction = (req,res) =>{
+  Order.getAllOrders(loggedUser)
+  .then((orders)=>{
+    res.statusCode = 200;
+    res.set("Content-Type", "application/json");
+    // console.log(orders);
+    res.json({ success: true, orders:orders});
+})
+.catch((err) => {
+    res.statusCode = 500;
+    res.set("Content-Type", "application/json");
+    res.json({ success: false, message: err });
+  }); 
+}
+
+
+const getOrderStatsAction = (req,res)=>{
+  Order.getOrderStats(loggedUser)
+  .then((stats)=>{
+    res.statusCode = 200;
+    res.set("Content-Type", "application/json");
+    res.json({ success: true, stats:stats});
+})
+.catch((err) => {
+    res.statusCode = 500;
+    res.set("Content-Type", "application/json");
+    res.json({ success: false, message: err });
+  }); 
+}
+
+
+const updateOrderStatusAction = (req,res) =>{
+  // console.log(req.body.Order_ID, req.body.Order_status)
+  Order.updateOrderStatus(req.body.Order_ID, req.body.Order_status)
+  .then((stats)=>{
+    res.statusCode = 200;
+    res.set("Content-Type", "application/json");
+    res.json({ success: true});
+})
+.catch((err) => {
+    res.statusCode = 500;
+    res.set("Content-Type", "application/json");
+    res.json({ success: false, message: err });
+  }); 
+}
+
+
+
 module.exports = {
 registerAction,
 loginAction,
@@ -338,7 +389,9 @@ checkAuth,
     updateUserDetailsAction,
     getUserDetails,
     updatePasswordAction,
-    getPwdAction
-
+    getPwdAction,
+    getOrderStatsAction,
+    getAllOrdersAction,
+    updateOrderStatusAction
 };
 

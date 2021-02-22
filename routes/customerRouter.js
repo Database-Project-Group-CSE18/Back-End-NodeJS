@@ -24,10 +24,17 @@ router.post('/bankCards',customerController.insertBankCardsAction)
 router.delete('/bankCards',customerController.deleteBankCardAction)
 
 
-
+// user routes
 router.get("/user",customerController.getUserDetails)
 router.put("/user",customerController.updateUserDetailsAction)
 router.put("/userpwd",customerController.updatePasswordAction)
 router.get("/userpwd",customerController.getPwdAction)
+
+
+//order routes
+router.get("/allorders",customerController.getAllOrdersAction)
+router.get("/allorders/stats",customerController.getOrderStatsAction)
+router.put("/allorders",customerController.updateOrderStatusAction)
+
 
 module.exports = router;
