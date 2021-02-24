@@ -1,4 +1,4 @@
-const ItemModel = require("../models/OrderModel");
+/*const ItemModel = require("../models/OrderModel");
 const db = require("../config/database");
 
 const getAllOrdersAction = (req, res) => {
@@ -14,4 +14,4 @@ const getAllOrdersAction = (req, res) => {
       res.json({ success: false, message: err });
     });
 };
-exports.getAllOrdersAction = getAllOrdersAction;
+exports.getAllOrdersAction = getAllOrdersAction;*/

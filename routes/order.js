@@ -3,11 +3,11 @@ const orderRouter = express.Router();
 const orderController = require('../controllers/orderController');
 const { deleteBankCard } = require('../models/userModel');
 
-/* GET items listing. */
-orderRouter.route('/').get(OrderController.getAllOrdersAction)
+
+/*orderRouter.route('/').get(OrderController.getAllOrdersAction)
 .post(OrderController.searchOrdersInOrderlist);
 
-/*orderRouter.route("/categories")
+orderRouter.route("/categories")
    .get(orderController.getAwaitingPayment)
 
 orderRouter.route("/search/:category")

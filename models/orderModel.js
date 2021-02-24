@@ -23,7 +23,7 @@ module.exports = {
 }
 
 
-const getAllOrders = () => {
+/*const getAllOrders = () => {
   return new Promise((resolve, reject) => {
     db.query(
       "SELECT * FROM electrica.user",
@@ -37,4 +37,4 @@ const getAllOrders = () => {
     );
   });
 };
-exports.getAllOrders = getAllOrders;
+exports.getAllOrders = getAllOrders;*/
