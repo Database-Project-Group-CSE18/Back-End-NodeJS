@@ -22,6 +22,13 @@ itemRouter.route("/specificitem/replys/:Fb_id")
 itemRouter.route("/specificitem/addtocart")
   .post(itemController.addToCartAction);
 
+itemRouter.route("/cart")
+  .get(itemController.getCartItemsAction)
+
+itemRouter.route("/cart/:id")
+  .delete(itemController.deleteCartItemAction)
+
+
 module.exports = itemRouter;
 
 

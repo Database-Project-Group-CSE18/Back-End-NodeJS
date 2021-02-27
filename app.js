@@ -28,7 +28,7 @@ app.use(logger("dev"));
 // This is to allow our api for cross-origin resource sharing (To communicate with front end. It is in another server)
 app.use(cors( {
   origin: ["http://localhost:3000"],
-  methods : ["GET", "POST"], // The methods that we will use
+  methods : ["GET", "POST", "DELETE"], // The methods that we will use
   credentials: true // Allow cookie to be enabled
 }));
 
