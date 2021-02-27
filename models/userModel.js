@@ -21,7 +21,7 @@ function registerCustomer(
   regDate
 ) {
   const sqlInsert =
-    "INSERT INTO user (user_type, first_name, last_name, email, phone_no, password, cart_id, reg_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    "INSERT INTO user (User_Type, First_name, Last_name, email, Phone_No, Password, Cart_ID, Reg_Date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
   return new Promise((resolve, reject) => {
     bcrypt.hash(password, saltRounds, (err, hash) => {
       if (err) {
