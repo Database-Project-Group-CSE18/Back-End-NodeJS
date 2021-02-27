@@ -3,7 +3,7 @@ const db = require('../config/database');
 const getBankCards = (userID)=>{
 
     return new Promise((resolve, reject) => {
-      const query = "SELECT * FROM Bank_Card where User_ID = ?";
+      const query = "SELECT * FROM BankCard where customer_id = ?";
         db.query(query, [userID],
         (error, results, fields) => {
           if (!error) {

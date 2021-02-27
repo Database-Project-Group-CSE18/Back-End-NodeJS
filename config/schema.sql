@@ -2,10 +2,10 @@
 CREATE TABLE `Item` (
   `Item_ID` int not null auto_increment,
   `Num_of_orders` Numeric(6),
-  `Item_name` Varchar(20),
+  `Item_name` Varchar(80),
   `Category` Varchar(20),
   `Description` Varchar(200),
-  `Status` Varchar(10),
+  `Status` ENUM('Available', 'Out of stock'),
   `Price` Float,
   `Image` blob,
   PRIMARY KEY (`Item_ID`)
@@ -51,12 +51,13 @@ CREATE TABLE `Address` (
 CREATE TABLE `Variant` (
   `Variant_ID` int not null auto_increment,
   `Item_ID` int,
-  `Variant_name` Varchar(6),
+  `Variant_name` Varchar(30),
   `Price` Float,
-  `Color` Varchar(10),
-  `Size` Varchar(10),
-  `SpecificDetail` Varchar(20),
+  `Color` Varchar(30),
+  `Size` Varchar(30),
+  `SpecificDetail` Varchar(100),
   `Quantity` Numeric(4),
+  `Image` blob,
   PRIMARY KEY (`Variant_ID`),
 --   KEY `Fk` (`Item_ID`)
   FOREIGN KEY (`Item_ID`) references Item(`Item_ID`)
@@ -85,10 +86,9 @@ CREATE TABLE `Order_Address` (
   `City` Varchar(20),
   `Street` Varchar(20),
   `ZIP` Varchar(10),
-  PRIMARY KEY (`Address_ID`),
+  PRIMARY KEY (`Address_ID`)
 --   KEY `Fk` (`Order_ID`),
 );
-
 
 CREATE TABLE `Order` (
   `Order_ID` int not null auto_increment,
@@ -116,16 +116,6 @@ CREATE TABLE `Order_Item` (
 );
 
 
-CREATE TABLE `Image` (
-  `Image_ID` int not null auto_increment,
-  `Variant_ID` int,
-  `Image` Blob,
-  PRIMARY KEY (`Image_ID`),
---   KEY `Fk` (`Variant_ID`),
-  FOREIGN KEY (`Variant_ID`) references Variant(`Variant_ID`)
-
-
-);
 
 
 
@@ -169,9 +159,27 @@ CREATE TABLE `Reply` (
 
 
 
--- insert statements
+--- insert statements
+----- items
+INSERT INTO item(Num_of_orders,Item_name,Category,Description,Status, Price) VALUES(2,'iPhone 8','Mobile Phones','asdasjhdas asdhajsdas dsahdjahsd asdjahsdjas asdiasd','Available', 25000);
+INSERT INTO item(Num_of_orders,Item_name,Category,Description,Status, Price) VALUES(8,'PunnkFunnk Wireless Headphones Bluetooth','Earphones','asdasjhdas asdhajsdas dsahdjahsd asdjahsdjas asdiasd','Available', 3500);
+INSERT INTO item(Num_of_orders,Item_name,Category,Description,Status, Price) VALUES(20,'Wireless Charger Stand','Phone Accessories','asdhjsads sakjkdafkelgg wlgkwkglwe ewflwkeflw','Out of stock', 200);
+INSERT INTO item(Num_of_orders,Item_name,Category,Description,Status, Price) VALUES(45,'Philips Usb Speaker','Speakers','Speakers','Available', 200);
+INSERT INTO item(Num_of_orders,Item_name,Category,Description,Status, Price) VALUES(1,'Apple Watch Series 6','Wearable devices','asdhjsads sakjkdafkelgg wlgkwkglwe ewflwkeflw','Out of stock', 200);
+INSERT INTO item(Num_of_orders,Item_name,Category,Description,Status, Price) VALUES(20,'Canon EOS Rebel T5i DSLR','Cameras','asdhjsads sakjkdafkelgg wlgkwkglwe ewflwkeflw','Available', 200);
 
-INSERT INTO Item(Num_of_orders,Item_name,Category,Description,Status, Price) VALUES(2,'BOTTLE','STATIONERY','ABCABC','AVAILABLE', 200);
+----- variants
+INSERT INTO variant(Item_ID,Variant_name,Price,Color,Size, SpecificDetail, Quantity) VALUES(1,'64GB Red','25000','Red','6 inches', 'Free tempered glass', 20);
+INSERT INTO variant(Item_ID,Variant_name,Price,Color,Size, SpecificDetail, Quantity) VALUES(1,'128GB Red','45000','Red','6 inches', 'Free tempered glass', 21);
+INSERT INTO variant(Item_ID,Variant_name,Price,Color,Size, SpecificDetail, Quantity) VALUES(1,'64GB Blue','22000','Blue','6 inches', 'Free tempered glass', 50);
+INSERT INTO variant(Item_ID,Variant_name,Price,Color,Size, SpecificDetail, Quantity) VALUES(2,'Black','5000','Black','Regular', 'asdasdadv', 20);
+INSERT INTO variant(Item_ID,Variant_name,Price,Color,Size, SpecificDetail, Quantity) VALUES(2,'Gray','5500','Gray','Regular', 'asdasdadv', 20);
+INSERT INTO variant(Item_ID,Variant_name,Price,Color,Size, SpecificDetail, Quantity) VALUES(3,'Charger','5000','Black','10x10x10cm', 'Wireless charger', 20);
+INSERT INTO variant(Item_ID,Variant_name,Price,Color,Size, SpecificDetail, Quantity) VALUES(4,'Speaker','25000','Black','10X20X20cm', 'Wired speker set', 20);
+INSERT INTO variant(Item_ID,Variant_name,Price,Color,Size, SpecificDetail, Quantity) VALUES(5,'Red','35000','Red','2 inches', 'With two belts', 10);
+INSERT INTO variant(Item_ID,Variant_name,Price,Color,Size, SpecificDetail, Quantity) VALUES(5,'Blue','32000','Blue','2 inches', 'With one belts', 15);
+INSERT INTO variant(Item_ID,Variant_name,Price,Color,Size, SpecificDetail, Quantity) VALUES(5,'Gray','31000','Gray','2 inches', 'With three belts', 18);
+INSERT INTO variant(Item_ID,Variant_name,Price,Color,Size, SpecificDetail, Quantity) VALUES(6,'64GB Black','85000','black','large', 'Free box', 10);
 
 INSERT INTO Cart(NumOfItems) VALUES(2);
 
@@ -186,6 +194,28 @@ INSERT INTO Bank_Card(Card_Number,User_ID,Bank_Name,Owner,CVV,Exp_Date) VALUES('
 INSERT INTO variant(Item_ID,Variant_name,Price,Color,Size,SpecificDetail, Quantity) VALUES(1,'Pink',600,'pink','1500ml','none', 30);
 INSERT INTO variant(Item_ID,Variant_name,Price,Color,Size,SpecificDetail, Quantity) VALUES(1,'Blue',750,'blue','2200ml','none', 40);
 
+
+INSERT INTO `Order_Address`
+(
+  `Address_ID`,
+  `First Name`,
+  `Last_Name`,
+  `State`,
+  `Number`,
+  `City`,
+  `Street`,
+  `ZIP`
+)
+VALUES
+(1,
+"Chandima",
+"Amarasena",
+"western",
+"No.231",
+"Peliyagoda",
+"Dutugemunu Mv",
+"11830");
+
 INSERT INTO `order`
 (`User_ID`,
 `Address_ID`,
@@ -195,7 +225,7 @@ INSERT INTO `order`
 `Tracking _Number`)
 VALUES
 (1,
-2,
+1,
 "Shipped",
 "2345123456783456",
 "2020/01/02",
@@ -205,3 +235,5 @@ INSERT INTO feedback(User_ID,Item_ID,Order_ID,Rate,Comment) VALUES(1,1,1,4,'nice
 INSERT INTO feedback(User_ID,Item_ID,Order_ID,Rate,Comment) VALUES(1,1,1,1,'not recived');
 INSERT INTO feedback(User_ID,Item_ID,Order_ID,Rate,Comment) VALUES(1,1,1,5,'Fast shipping');
 
+INSERT INTO cart_item(Cart_ID, Variant_ID, Quantity) VALUES (1,1,6);
+INSERT INTO cart_item(Cart_ID, Variant_ID, Quantity) VALUES (1,2,5);

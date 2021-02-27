@@ -10,10 +10,11 @@ const jwt = require("jsonwebtoken");
 
 
 // Route files
-const indexRouter = require('./routes');
-const customerRouter = require('./routes/customerRouter');
-const sellerRouter = require('./routes/sellerRouter');
-const itemRouter = require('./routes/item');
+var indexRouter = require('./routes');
+var customerRouter = require('./routes/customerRouter');
+var sellerRouter = require('./routes/sellerRouter');
+var itemRouter = require('./routes/item');
+var orderRouter = require('./routes/order');
 
 const app = express();
 
@@ -27,7 +28,7 @@ app.use(logger("dev"));
 // This is to allow our api for cross-origin resource sharing (To communicate with front end. It is in another server)
 app.use(cors( {
   origin: ["http://localhost:3000"],
-  methods : ["GET", "POST"], // The methods that we will use
+  methods : ["GET", "POST", "DELETE"], // The methods that we will use
   credentials: true // Allow cookie to be enabled
 }));
 
@@ -61,6 +62,7 @@ app.use('/', indexRouter);
 app.use('/customer', customerRouter);
 app.use('/seller', sellerRouter);
 app.use('/items', itemRouter);
+app.use('/orders', orderRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
