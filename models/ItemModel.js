@@ -9,7 +9,7 @@ const db = require("../config/database");
 const getAllItems = () => {
   return new Promise((resolve, reject) => {
     db.query(
-      "SELECT Item_ID, Num_of_orders, Item_name, Category, Status, AVG(rate) AS rating, COUNT(rate) AS Reviews , Price, Image FROM item NATURAL LEFT JOIN feedback GROUP BY Item_name",
+      "SELECT * FROM Display_item",
       (error, results, fields) => {
         if (!error) {
           resolve(results);
@@ -24,7 +24,7 @@ const getAllItems = () => {
 const getItemsByCategory = (category) => {
   return new Promise((resolve, reject) => {
     db.query(
-      `SELECT Item_ID, Num_of_orders, Item_name, Category, Status, AVG(rate) AS Rating, COUNT(rate) AS Reviews , Price, Image FROM item NATURAL LEFT JOIN feedback WHERE Category = ? GROUP BY Item_name`,
+      `SELECT * FROM Display_item WHERE category_name = ? GROUP BY item_name`,
       [category],
       (error, results, fields) => {
         if (!error) {
@@ -40,7 +40,7 @@ const getItemsByCategory = (category) => {
 const getItemByID = (id) => {
   return new Promise((resolve, reject) => {
     db.query(
-      `SELECT Item_ID, Num_of_orders, Item_name, Category, Status, AVG(rate) AS rating, COUNT(rate) AS Orders , Price, Image, Description FROM item NATURAL LEFT JOIN feedback WHERE Item_ID = ? GROUP BY Item_name`,
+      `SELECT * FROM Display_item WHERE item_id = ? GROUP BY item_name`,
       [parseInt(id)],
       (error, results, fields) => {
         if (!error) {
@@ -56,7 +56,7 @@ const getItemByID = (id) => {
 const getVarientsByItemID = (id) =>{
   return new Promise((resolve, reject) => {
     db.query(
-      `SELECT * FROM variant WHERE Item_ID = ?`,
+      `SELECT * FROM variant WHERE item_id = ?`,
       [id],
       (error, results, fields) => {
         if (!error) {
@@ -72,7 +72,7 @@ const getVarientsByItemID = (id) =>{
 const getFeedbacksByItemID = (id) =>{
   return new Promise((resolve, reject) => {
     db.query(
-      `SELECT Feedback_ID, First_name, Last_name, Rate, Comment FROM feedback NATURAL JOIN user WHERE Item_ID = ?`,
+      `SELECT feedback_ID, first_name, last_name, rate, comment FROM feedback JOIN user ON feedback.customer_id = user.user_id WHERE item_id = ?`,
       [id],
       (error, results, fields) => {
         if (!error) {
@@ -104,10 +104,10 @@ const getReplyByFeedbackID = (id) =>{
 const getCartItems = (id) => {
   return new Promise((resolve, reject) => {
     db.query(
-      `SELECT item.Item_ID, item.Item_name, variant.Price, cart_item.Quantity, variant.Variant_name AS variant, variant.image FROM cart_item 
-      JOIN variant ON cart_item.Variant_ID = variant.Variant_ID
-      JOIN item ON item.Item_ID = variant.Item_ID
-      WHERE cart_item.Cart_ID = ?;`,
+      `SELECT item.item_id, item.item_name, variant.price, cart_item.quantity, variant.variant_name AS variant, variant.image FROM cart_item 
+      JOIN variant ON cart_item.variant_ID = variant.variant_ID
+      JOIN item ON item.item_ID = variant.item_ID
+      WHERE cart_item.cart_id = ?`,
       [id],
       (error, results, fields) => {
         if (!error) {
@@ -123,7 +123,7 @@ const getCartItems = (id) => {
 const getAllCategories= () =>{
   return new Promise((resolve, reject) => {
     db.query(
-      `SELECT DISTINCT Category FROM item`,
+      `SELECT DISTINCT category_name FROM item`,
       (error, results, fields) => {
         if (!error) {
           resolve(results);
@@ -137,10 +137,10 @@ const getAllCategories= () =>{
 
 const searchItemsInCategory = (category, item_name) => {
   
-  var query = `SELECT Item_ID, Num_of_orders, Item_name, Category, Status, AVG(rate) AS rating, COUNT(rate) AS Orders , Price, Image FROM item NATURAL LEFT JOIN feedback WHERE Category = ? AND Item_name LIKE ? GROUP BY Item_name`;
+  var query = `SELECT * FROM Display_item WHERE category = ? AND item_name LIKE ? GROUP BY item_name`;
   var values = [category, '%'+item_name+'%']
   if(category === 'All Categories'){
-    var query = `SELECT Item_ID, Num_of_orders, Item_name, Category, Status, AVG(rate) AS rating, COUNT(rate) AS Orders , Price, Image FROM item NATURAL LEFT JOIN feedback WHERE Item_name LIKE ? GROUP BY Item_name`;
+    var query = `SELECT * FROM Display_item WHERE item_name LIKE ? GROUP BY item_name`;
     var values = ['%'+item_name+'%']
   }
 
@@ -182,7 +182,7 @@ exports.searchItemsInCategory = searchItemsInCategory;
 const addToCart = (data) => {
   return new Promise((resolve, reject) => {
     db.query(
-      `INSERT INTO cart_item(Cart_ID, Variant_ID, Quantity) VALUES (?,?,?)`,
+      `INSERT INTO Cart(cart_ID, variant_id, quantity) VALUES (?,?,?)`,
       Object.values(data),
       (error, results, fields) => {
         if (!error) {
