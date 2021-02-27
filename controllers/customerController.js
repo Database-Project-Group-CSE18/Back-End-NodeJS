@@ -130,7 +130,7 @@ const loginAction = (req, res) => {
             res.status(400);
           });
       }
-      res.cookie("jwt", token, {httpOnly: true, maxAge: 1000 * 60 * 60 * 24})
+      res.cookie("jwt", token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 });
       // res.cookie("user", result, {httpOnly: true, maxAge: 1000 * 60 * 60 * 24})
     })
     .catch((err) => {
@@ -141,6 +141,19 @@ const loginAction = (req, res) => {
       });
       res.status(400);
     });
+};
+
+const logoutAction = (req, res) => {
+  if (req.session.user) {
+    req.session.destroy((err) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.clearCookie("user");
+        res.redirect("/signin");
+      }
+    });
+  }
 };
 
 const checkLoginAction = (req, res) => {
@@ -344,7 +357,7 @@ module.exports = {
   registerAction,
   loginAction,
   checkLoginAction,
-
+  logoutAction,
   getAddressesAction,
   insertAddressAction,
   deleteAddressAction,

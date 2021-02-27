@@ -9,6 +9,8 @@ router.use(bodyParser.json());
 
 router.post("/register", customerController.registerAction);
 router.post("/login", customerController.loginAction);
+router.post("/logout",  customerController.logoutAction);
+
 router.get("/login",  customerController.checkLoginAction);
 // router.get("/isUserAuth", customerController.checkAuth);
 
