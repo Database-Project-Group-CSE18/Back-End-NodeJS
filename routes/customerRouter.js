@@ -7,10 +7,10 @@ var router = express.Router();
 
 router.use(bodyParser.json());
 
-router.post("/register",verifyJWT, customerController.registerAction);
+router.post("/register", customerController.registerAction);
 router.post("/login", customerController.loginAction);
 router.get("/login",  customerController.checkLoginAction);
-router.get("/isUserAuth", customerController.checkAuth);
+// router.get("/isUserAuth", customerController.checkAuth);
 
 
 //address routes
