@@ -4,7 +4,7 @@ const Customer = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const authentication = require("../middleware/Authentication");
 
-var loggedUser = 2;
+var loggedUser = 3;
 
 
 

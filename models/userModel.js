@@ -174,5 +174,5 @@ module.exports = {
   updateUserDetails,
   updatePassword,
   getOrderNumbers,
-    getPwd
+    getPwd,
 };
