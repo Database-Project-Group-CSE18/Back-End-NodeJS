@@ -5,7 +5,8 @@ const Order = require("../models/orderModel");
 const jwt = require("jsonwebtoken");
 const authentication = require("../middleware/Authentication");
 
-var loggedUser = 3;
+var loggedUser = 1;
+// var loggedUserNew = req.session.user.user_id;
 
 const registerAction = (req, res) => {
   console.log("register is called");
@@ -194,6 +195,7 @@ const checkLoginAction = (req, res) => {
 
 // logged user should get from request
 const getAddressesAction = (req, res) => {
+  // console.log("session",req.session.user.user_id)
   Address.getAddressByUser(loggedUser)
     .then((addresses) => {
       res.statusCode = 200;
@@ -225,7 +227,7 @@ const insertAddressAction = (req, res) => {
 };
 
 const deleteAddressAction = (req, res) => {
-  console.log(req.body);
+  console.log(req.body.id);
   Address.deleteAddress(req.body.id)
     .then((success) => {
       res.statusCode = 200;
@@ -258,17 +260,35 @@ const getBankCardsAction = (req, res) => {
 
 //should get bank card details from request
 const insertBankCardsAction = (req, res) => {
-  BankCard.insertBankCard(req.body.CardDetails, loggedUser)
-    .then((success) => {
+  BankCard.findCardByNumber(req.body.CardDetails.card_number)
+  .then((card) => {
+    if(card.length===0){
+      BankCard.insertBankCard(req.body.CardDetails, loggedUser)
+      .then((success) => {
+        res.statusCode = 200;
+        res.set("Content-Type", "application/json");
+        res.json({ success: true });
+      })
+      .catch((err) => {
+        res.statusCode = 500;
+        res.set("Content-Type", "application/json");
+        res.json({ success: false, message: err });
+      });
+    }
+    else{
       res.statusCode = 200;
       res.set("Content-Type", "application/json");
-      res.json({ success: true });
-    })
-    .catch((err) => {
-      res.statusCode = 500;
-      res.set("Content-Type", "application/json");
-      res.json({ success: false, message: err });
-    });
+      res.json({ success: false });
+    }
+    
+  })
+  .catch((err) => {
+    res.statusCode = 500;
+    res.set("Content-Type", "application/json");
+    res.json({ success: false, message: err });
+  });
+
+  
 };
 
 const deleteBankCardAction = (req, res) => {
@@ -293,6 +313,7 @@ const getUserDetails = (req, res) => {
     .then((user) => {
       Customer.getOrderNumbers(loggedUser)
         .then((det) => {
+          console.log("det",det)
           console.log(det, user);
           res.statusCode = 200;
           res.set("Content-Type", "application/json");
@@ -325,34 +346,52 @@ const updateUserDetailsAction = (req, res) => {
     });
 };
 
-const getPwdAction = (req, res) => {
-  Customer.getPwd(loggedUser)
-    .then((pwd) => {
-      res.statusCode = 200;
-      res.set("Content-Type", "application/json");
-      res.json({ success: true, pwd: pwd });
-    })
-    .catch((err) => {
-      res.statusCode = 500;
-      res.set("Content-Type", "application/json");
-      res.json({ success: false, message: err });
-    });
-};
+// const getPwdAction = (req, res) => {
+//   Customer.getPwd(loggedUser)
+//     .then((pwd) => {
+//       res.statusCode = 200;
+//       res.set("Content-Type", "application/json");
+//       res.json({ success: true, pwd: pwd });
+//     })
+//     .catch((err) => {
+//       res.statusCode = 500;
+//       res.set("Content-Type", "application/json");
+//       res.json({ success: false, message: err });
+//     });
+// };
 
-const updatePasswordAction = (req, res) => {
-  console.log(req.body);
-  Customer.updatePassword(req.body.newpwd, loggedUser)
-    .then((success) => {
-      res.statusCode = 200;
-      res.set("Content-Type", "application/json");
-      res.json({ success: true });
-    })
-    .catch((err) => {
-      res.statusCode = 500;
-      res.set("Content-Type", "application/json");
-      res.json({ success: false, message: err });
-    });
-};
+// const updatePasswordAction = (req, res) => {
+//   // console.log(req.body);
+
+//   Customer.updatePassword(req.body.newpwd, loggedUser)
+//     .then((success) => {
+//       res.statusCode = 200;
+//       res.set("Content-Type", "application/json");
+//       res.json({ success: true });
+//     })
+//     .catch((err) => {
+//       res.statusCode = 500;
+//       res.set("Content-Type", "application/json");
+//       res.json({ success: false, message: err });
+//     });
+// };
+
+const updatePasswordNew = (req,res)=>{    // test this function
+  console.log(req.body.newpwd,req.body.oldpwd)
+  Customer.updatePasswordNew(req.body.newpwd,req.body.oldpwd,loggedUser)
+  .then((success) => {
+          res.statusCode = 200;
+          res.set("Content-Type", "application/json");
+          res.json({ success: true });
+        })
+        .catch((err) => {
+          res.statusCode = 500;
+          res.set("Content-Type", "application/json");
+          res.json({ success: false, message: err.message });
+        });
+}
+
+
 
 // Order Details
 
@@ -417,8 +456,9 @@ module.exports = {
   deleteBankCardAction,
   updateUserDetailsAction,
   getUserDetails,
-  updatePasswordAction,
-  getPwdAction,
+  // updatePasswordAction,
+  // getPwdAction,
+  updatePasswordNew,
   getOrderStatsAction,
   getAllOrdersAction,
   updateOrderStatusAction

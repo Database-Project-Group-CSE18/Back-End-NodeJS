@@ -29,8 +29,9 @@ router.delete('/bankCards',customerController.deleteBankCardAction)
 // user routes
 router.get("/user",customerController.getUserDetails)
 router.put("/user",customerController.updateUserDetailsAction)
-router.put("/userpwd",customerController.updatePasswordAction)
-router.get("/userpwd",customerController.getPwdAction)
+// router.put("/userpwd",customerController.updatePasswordAction)
+// router.get("/userpwd",customerController.getPwdAction)
+router.put("/userpwd",customerController.updatePasswordNew)
 
 
 //order routes
