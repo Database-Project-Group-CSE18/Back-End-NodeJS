@@ -43,9 +43,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 //save cookie
 app.use(session({
-  key: "email",
+  key: "user",
   secret: "database_project",
-  resave: true,
+  resave: false,
   saveUninitialized: false,
   cookie: { 
     expires: 1000 * 60 * 60 * 24, // After 24 hours

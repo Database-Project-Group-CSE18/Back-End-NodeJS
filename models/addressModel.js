@@ -3,7 +3,7 @@ const db = require('../config/database');
 
 const getAddressByUser = (user_id) => {
     return new Promise((resolve, reject) => {
-      const query = "SELECT * FROM Address where User_ID = ?";
+      const query = "SELECT * FROM Address where customer_id = ?";
       db.query(query, [user_id],
       (error, results, fields) => {
         if (!error) {

@@ -12,16 +12,15 @@ const session = require("express-session");
 const cookieParser = require("cookie-parser");
 
 function registerCustomer(
-  useType,
   firstName,
   lastName,
   email,
-  phoneNo,
+  phoneNumber,
   password,
   regDate
 ) {
-  const sqlInsert =
-    "INSERT INTO user (user_type, first_name, last_name, email, phone_no, password, cart_id, reg_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+  const sqlProcedure =
+    "CALL RegisterCustomer(?, ?, ?, ?, ?, ?)";
   return new Promise((resolve, reject) => {
     bcrypt.hash(password, saltRounds, (err, hash) => {
       if (err) {
@@ -29,8 +28,8 @@ function registerCustomer(
       }
 
       db.query(
-        sqlInsert,
-        [useType, firstName, lastName, email, phoneNo, hash, 1, regDate],
+        sqlProcedure,
+        [email, hash, firstName, lastName, phoneNumber, regDate],
         (error, result) => {
           if (!!error) {
             console.log(error);
@@ -44,18 +43,18 @@ function registerCustomer(
   });
 }
 
-function loginCustomer(email, password) {
-  const sqlSelect = "SELECT * FROM user WHERE email = ?;";
+function loginUser(email, password) {
+  const sqlSelect = "SELECT * FROM `User` WHERE email = ? ;"
   console.log("LoginModel is called");
   return new Promise((resolve, reject) => {
     db.query(sqlSelect, email, (error, result) => {
-      // console.log(result[0].Password);
+      // console.log(result[0].password);
       if (!!error) {
         console.log(error);
         reject(error);
       }
       if (result.length > 0) {
-        bcrypt.compare(password, result[0].Password, (error, response) => {
+        bcrypt.compare(password, result[0].password, (error, response) => {
           if (response) {
             console.log("Userfound");
             resolve(result);
@@ -71,6 +70,34 @@ function loginCustomer(email, password) {
   });
 }
 
+function getCustomerDetails(email) {
+  const sqlSelect = "SELECT * FROM `CustomerDetails` WHERE email = ? ;"
+  return new Promise((resolve, reject) => {
+    db.query(sqlSelect, email, (error, result) => {
+      if (!!error) {
+        console.log(error);
+        reject(error);
+      } else {
+        resolve(result[0]);
+      }
+    });
+  });
+}
+
+function getSellerDetails(email) {
+  const sqlSelect = "SELECT * FROM `SellerDetails` WHERE email = ? ;"
+  return new Promise((resolve, reject) => {
+    db.query(sqlSelect, email, (error, result) => {
+      // console.log(result[0].password);
+      if (!!error) {
+        console.log(error);
+        reject(error);
+      } else {
+        resolve(result[0]);
+      }
+    });
+  });
+}
 
 
 
@@ -173,10 +200,12 @@ const updatePassword = (pwd) => {
 
 module.exports = {
   registerCustomer,
-  loginCustomer,
+  loginUser,
+  getCustomerDetails,
+  getSellerDetails,
   getUserDetails,
   updateUserDetails,
   updatePassword,
   getOrderNumbers,
-    getPwd
+    getPwd,
 };

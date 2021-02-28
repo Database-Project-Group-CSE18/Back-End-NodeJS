@@ -1,6 +1,8 @@
 const ItemModel = require("../models/ItemModel");
 const db = require("../config/database");
 
+const currentUser = 3;
+
 const getAllItemsAction = (req, res) => {
   ItemModel.getAllItems()
     .then((items) => {
@@ -79,7 +81,7 @@ const getReplysByFbIDAction = (req, res) => {
 };
 
 const getCartItemsAction = (req, res) => {
-  ItemModel.getCartItems(req.params.cart_id)
+  ItemModel.getCartItems(currentUser)
     .then((cart) => {
       res.statusCode = 200;
       res.set("Content-Type", "application/json");
@@ -91,6 +93,21 @@ const getCartItemsAction = (req, res) => {
       res.json({ success: false, message: err });
     });
 };
+
+const deleteCartItemAction  = (req,res)=>{
+  ItemModel.deleteCartItem(currentUser,req.params.id)
+  .then((success)=>{
+      res.statusCode = 200;
+      res.set("Content-Type", "application/json");
+      res.json({ success: true});
+  })
+  .catch((err) => {
+      res.statusCode = 500;
+      res.set("Content-Type", "application/json");
+      res.json({ success: false, message: err });
+    }); 
+}
+
 
 const getCategoriesAction = (req, res) => {
   ItemModel.getAllCategories()
@@ -132,6 +149,7 @@ exports.getReplysByFbIDAction = getReplysByFbIDAction;
 exports.getCartItemsAction = getCartItemsAction;
 exports.getCategoriesAction = getCategoriesAction;
 exports.searchItemsInCategoryAction = searchItemsInCategoryAction;
+exports.deleteCartItemAction = deleteCartItemAction;
 
 
 const addToCartAction = (req, res) => {
