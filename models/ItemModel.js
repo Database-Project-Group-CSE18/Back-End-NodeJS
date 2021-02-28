@@ -199,7 +199,7 @@ exports.deleteCartItem =deleteCartItem;
 const addToCart = (data) => {
   return new Promise((resolve, reject) => {
     db.query(
-      `INSERT INTO Cart(cart_id, variant_id, quantity) VALUES (?,?,?)`,
+      `INSERT INTO Cart(cart_id, variant_id, quantity, delivery_time) VALUES (?,?,?,?)`,
       Object.values(data),
       (error, results, fields) => {
         if (!error) {
