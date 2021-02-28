@@ -15,8 +15,7 @@ router.get("/login",  customerController.checkLoginAction);
 
 router.get("/user",customerController.getUserDetails)
 router.put("/user",customerController.updateUserDetailsAction)
-router.put("/userpwd",customerController.updatePasswordAction)
-router.get("/userpwd",customerController.getPwdAction)
+router.put("/userpwd",customerController.updatePasswordNew)
 
 /**################################################################
                           Address Model
@@ -31,5 +30,15 @@ router.delete('/addresses',customerController.deleteAddressAction)
 router.get('/bankCards',customerController.getBankCardsAction)
 router.post('/bankCards',customerController.insertBankCardsAction)
 router.delete('/bankCards',customerController.deleteBankCardAction)
+
+
+/**################################################################
+                          Order Model
+ ################################################################# */
+
+router.get("/allorders",customerController.getAllOrdersAction)
+router.get("/allorders/stats",customerController.getOrderStatsAction)
+router.put("/allorders",customerController.updateOrderStatusAction)
+
 
 module.exports = router;
