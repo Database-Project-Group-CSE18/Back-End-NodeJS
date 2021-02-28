@@ -10,13 +10,13 @@ const getBankCards = (userID)=>{
         db.query(query, [userID],
         (error, results, fields) => {
           if (!error) {     
-            // for(var i= 0;i<results.length;i++){
-            //   var cardNumber = results[i].card_number
-            //   var decNum = cryptr.decrypt(cardNumber)
-            //   results[i].card_number = decNum
+            for(var i= 0;i<results.length;i++){
+              var cardNumber = results[i].card_number
+              var decNum = cryptr.decrypt(cardNumber)
+              results[i].card_number = decNum
               
-            // }
-            // // console.log("bank cards:",results)
+            }
+            // console.log("bank cards:",results)
             resolve(results);
           } else {
             reject(error);
@@ -26,31 +26,13 @@ const getBankCards = (userID)=>{
 }
 
 
-
-const findCardByNumber = (card_number)=>{
-  // const encryptedTestCardNumber = cryptr.encrypt(card_number);
-  return new Promise((resolve, reject) => {
-    const query = "SELECT * FROM BankCard WHERE card_number = ?";
-      db.query(query, [card_number],
-      (error, results, fields) => {
-        if (!error) {
-          resolve(results);
-        } else {
-          // console.log("query error");
-          reject(error);
-        }
-      });
-    });
-  }
-
-
 const insertBankCard = (bank_card,loggedUser)=>{
-  // const encryptedCardNumber = cryptr.encrypt(bank_card.card_number);
+  const encryptedCardNumber = cryptr.encrypt(bank_card.card_number);
   const encryptedcvv = cryptr.encrypt(bank_card.cvv)
     // console.log(bank_card,loggedUser);
     return new Promise((resolve, reject) => {
-      const query = "INSERT INTO BankCard (card_number,customer_id,bank_name,owner,cvv,exp_date) VALUES (?,?,?,?,?,?)";
-        db.query(query, [bank_card.card_number,loggedUser,bank_card.bank_name,bank_card.owner,encryptedcvv,bank_card.exp_date],
+      const query = "INSERT INTO BankCard (card_number,customer_id,bank_name,owner,cvv,exp_date,card_type) VALUES (?,?,?,?,?,?,?)";
+        db.query(query, [encryptedCardNumber,loggedUser,bank_card.bank_name,bank_card.owner,encryptedcvv,bank_card.exp_date,bank_card.card_type],
         (error, results, fields) => {
           if (!error) {
             resolve(results);
@@ -63,12 +45,11 @@ const insertBankCard = (bank_card,loggedUser)=>{
     }
 
 
-const deleteBankCard = (card_number)=>{
-    // const encryptedCardNumber = cryptr.encrypt(card_number);
-    
+const deleteBankCard = (card_id)=>{
+   
     return new Promise((resolve, reject) => {  
-      const query = "DELETE FROM BankCard WHERE card_number = ?"
-        db.query(query, [card_number],
+      const query = "DELETE FROM BankCard WHERE card_id = ?"
+        db.query(query, [card_id],
         (error, results, fields) => {
           if (!error) {
             resolve(results);
@@ -86,5 +67,5 @@ module.exports = {
     getBankCards,
     insertBankCard,
     deleteBankCard,
-    findCardByNumber
+  
 }

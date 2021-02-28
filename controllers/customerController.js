@@ -5,8 +5,6 @@ const Order = require("../models/orderModel");
 const jwt = require("jsonwebtoken");
 const authentication = require("../middleware/Authentication");
 
-var loggedUser = 1;
-// var loggedUserNew = req.session.user.user_id;
 
 const registerAction = (req, res) => {
   console.log("register is called");
@@ -193,10 +191,10 @@ const checkLoginAction = (req, res) => {
 
 // Address Controllers
 
-// logged user should get from request
+//get all addresses
 const getAddressesAction = (req, res) => {
-  // console.log("session",req.session.user.user_id)
-  Address.getAddressByUser(loggedUser)
+  console.log("session",req.session.user.user_id)
+  Address.getAddressByUser(req.session.user.user_id)
     .then((addresses) => {
       res.statusCode = 200;
       res.set("Content-Type", "application/json");
@@ -209,10 +207,10 @@ const getAddressesAction = (req, res) => {
     });
 };
 
-//should get address from request
+//insert address 
 const insertAddressAction = (req, res) => {
   // console.log(req.body.Address)
-  Address.insertAddress(req.body.Address, loggedUser)
+  Address.insertAddress(req.body.Address, req.session.user.user_id)
     .then((success) => {
       // console.log(success.insertId);
       res.statusCode = 200;
@@ -226,6 +224,7 @@ const insertAddressAction = (req, res) => {
     });
 };
 
+// delete address
 const deleteAddressAction = (req, res) => {
   console.log(req.body.id);
   Address.deleteAddress(req.body.id)
@@ -243,9 +242,9 @@ const deleteAddressAction = (req, res) => {
 
 // Bank Card Controllers
 
-// logged user should get from request
+// get bank card
 const getBankCardsAction = (req, res) => {
-  BankCard.getBankCards(loggedUser)
+  BankCard.getBankCards(req.session.user.user_id)
     .then((bankCards) => {
       res.statusCode = 200;
       res.set("Content-Type", "application/json");
@@ -258,12 +257,9 @@ const getBankCardsAction = (req, res) => {
     });
 };
 
-//should get bank card details from request
+// insert bank card
 const insertBankCardsAction = (req, res) => {
-  BankCard.findCardByNumber(req.body.CardDetails.card_number)
-  .then((card) => {
-    if(card.length===0){
-      BankCard.insertBankCard(req.body.CardDetails, loggedUser)
+      BankCard.insertBankCard(req.body.CardDetails, req.session.user.user_id)
       .then((success) => {
         res.statusCode = 200;
         res.set("Content-Type", "application/json");
@@ -275,25 +271,11 @@ const insertBankCardsAction = (req, res) => {
         res.json({ success: false, message: err });
       });
     }
-    else{
-      res.statusCode = 200;
-      res.set("Content-Type", "application/json");
-      res.json({ success: false });
-    }
-    
-  })
-  .catch((err) => {
-    res.statusCode = 500;
-    res.set("Content-Type", "application/json");
-    res.json({ success: false, message: err });
-  });
 
-  
-};
-
+// delete bank card
 const deleteBankCardAction = (req, res) => {
   console.log(req.body);
-  BankCard.deleteBankCard(req.body.cardNumber)
+  BankCard.deleteBankCard(req.body.card_id)
     .then((success) => {
       res.statusCode = 200;
       res.set("Content-Type", "application/json");
@@ -308,10 +290,11 @@ const deleteBankCardAction = (req, res) => {
 
 //Customer details controllers
 
+// get user details
 const getUserDetails = (req, res) => {
-  Customer.getUserDetails(loggedUser)
+  Customer.getUserDetails(req.session.user.user_id)
     .then((user) => {
-      Customer.getOrderNumbers(loggedUser)
+      Customer.getOrderNumbers(req.session.user.user_id)
         .then((det) => {
           console.log("det",det)
           console.log(det, user);
@@ -332,8 +315,9 @@ const getUserDetails = (req, res) => {
     });
 };
 
+//update user details
 const updateUserDetailsAction = (req, res) => {
-  Customer.updateUserDetails(req.body, loggedUser)
+  Customer.updateUserDetails(req.body, req.session.user.user_id)
     .then((success) => {
       res.statusCode = 200;
       res.set("Content-Type", "application/json");
@@ -346,39 +330,10 @@ const updateUserDetailsAction = (req, res) => {
     });
 };
 
-// const getPwdAction = (req, res) => {
-//   Customer.getPwd(loggedUser)
-//     .then((pwd) => {
-//       res.statusCode = 200;
-//       res.set("Content-Type", "application/json");
-//       res.json({ success: true, pwd: pwd });
-//     })
-//     .catch((err) => {
-//       res.statusCode = 500;
-//       res.set("Content-Type", "application/json");
-//       res.json({ success: false, message: err });
-//     });
-// };
-
-// const updatePasswordAction = (req, res) => {
-//   // console.log(req.body);
-
-//   Customer.updatePassword(req.body.newpwd, loggedUser)
-//     .then((success) => {
-//       res.statusCode = 200;
-//       res.set("Content-Type", "application/json");
-//       res.json({ success: true });
-//     })
-//     .catch((err) => {
-//       res.statusCode = 500;
-//       res.set("Content-Type", "application/json");
-//       res.json({ success: false, message: err });
-//     });
-// };
-
-const updatePasswordNew = (req,res)=>{    // test this function
+//update password
+const updatePasswordNew = (req,res)=>{    
   console.log(req.body.newpwd,req.body.oldpwd)
-  Customer.updatePasswordNew(req.body.newpwd,req.body.oldpwd,loggedUser)
+  Customer.updatePasswordNew(req.body.newpwd,req.body.oldpwd,req.session.user.user_id)
   .then((success) => {
           res.statusCode = 200;
           res.set("Content-Type", "application/json");
@@ -387,6 +342,7 @@ const updatePasswordNew = (req,res)=>{    // test this function
         .catch((err) => {
           res.statusCode = 500;
           res.set("Content-Type", "application/json");
+          console.log("err_msg",err)
           res.json({ success: false, message: err.message });
         });
 }
@@ -395,8 +351,9 @@ const updatePasswordNew = (req,res)=>{    // test this function
 
 // Order Details
 
+//get all orders
 const getAllOrdersAction = (req,res) =>{
-  Order.getAllOrders(loggedUser)
+  Order.getAllOrders(req.session.user.user_id)
   .then((orders)=>{
     res.statusCode = 200;
     res.set("Content-Type", "application/json");
@@ -410,9 +367,9 @@ const getAllOrdersAction = (req,res) =>{
   }); 
 }
 
-
+//get order stats
 const getOrderStatsAction = (req,res)=>{
-  Order.getOrderStats(loggedUser)
+  Order.getOrderStats(req.session.user.user_id)
   .then((stats)=>{
     res.statusCode = 200;
     res.set("Content-Type", "application/json");
@@ -425,7 +382,7 @@ const getOrderStatsAction = (req,res)=>{
   }); 
 }
 
-
+//update order status
 const updateOrderStatusAction = (req,res) =>{
   // console.log(req.body.Order_ID, req.body.Order_status)
   Order.updateOrderStatus(req.body.Order_ID, req.body.Order_status)
@@ -456,8 +413,6 @@ module.exports = {
   deleteBankCardAction,
   updateUserDetailsAction,
   getUserDetails,
-  // updatePasswordAction,
-  // getPwdAction,
   updatePasswordNew,
   getOrderStatsAction,
   getAllOrdersAction,

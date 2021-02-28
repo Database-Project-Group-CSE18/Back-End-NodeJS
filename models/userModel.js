@@ -27,7 +27,6 @@ function registerCustomer(
       if (err) {
         console.log(err);
       }
-
       db.query(
         sqlProcedure,
         [email, hash, firstName, lastName, phoneNumber, regDate],
@@ -161,43 +160,38 @@ const updateUserDetails = (user) => {
 };
 
 
-// const getPwd = (loggedUser)=>{
-//   return new Promise((resolve, reject) => {
-//     const query = "SELECT Password FROM User WHERE User_ID = ? ";
-//       db.query(query, [loggedUser],
-//       (error, results, fields) => {
-//         if (!error) {
-//           resolve(results);
-//         } else {
-//           reject(error);
-//         }
-//       });
-//     });
-// }
 
 
-const updatePasswordNew = (newpwd,oldpwd,loggedUser) =>{     // test this function
+const updatePasswordNew = (newpwd,oldpwd,loggedUser) =>{     
   // console.log(newpwd,oldpwd)
   return new Promise((resolve, reject) => {
     const query = "SELECT password FROM User WHERE user_id = ? ";
       db.query(query, [loggedUser],
       (error, results, fields) => {
-        // console.log("results",results[0].password)
+        console.log("results",results[0].password)
         if (!error) {
           bcrypt.compare(oldpwd, results[0].password, (error, response) => {
             console.log("Response",response,results[0].password,oldpwd);
-            if (response) {      
-              const query1 = "UPDATE User SET password = ? where user_id=?";
-              db.query(query1,[newpwd,loggedUser],
-                (error, results, fields) => {
-                  if (!error) {
-                    console.log("query done")
-                    resolve(results);
-                  } else {
-                    reject({message:"query error"});
-                  }
+            if (response) {  
+              bcrypt.hash(newpwd, saltRounds, (err, hash) => {
+                if (err) {
+                  console.log("hash error");
                 }
-                )
+                const query1 = "UPDATE User SET password = ? where user_id=?";
+                db.query(
+                  query1,
+                  [hash,loggedUser],
+                  (error, result) => {
+                    if (!!error) {
+                      console.log("query error");
+                      reject(error);
+                    } else {
+                      resolve(result);
+                    }
+                  }
+                );
+              });        
+             
             } else {
               reject({ message: "Incorrect Password Entered" });
             }
@@ -213,23 +207,6 @@ const updatePasswordNew = (newpwd,oldpwd,loggedUser) =>{     // test this functi
 }
 
 
-// const updatePassword = (pwd) => {
-//   return new Promise((resolve, reject) => {
-//     db.query(
-//       "UPDATE User SET Password = ? ",
-//       [pwd],
-//       (error, results, fields) => {
-//         if (!error) {
-//           resolve(results);
-//         } else {
-//           reject(error);
-//         }
-//       }
-//     );
-//   });
-// };
-
-
 module.exports = {
   registerCustomer,
   loginUser,
@@ -237,8 +214,6 @@ module.exports = {
   getSellerDetails,
   getUserDetails,
   updateUserDetails,
-  // updatePassword,
   getOrderNumbers,
-  // getPwd,
   updatePasswordNew
 };
