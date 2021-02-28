@@ -51,13 +51,18 @@ const registerAction = (req, res) => {
       console.log("Successfully added a new customer");
       res.type("application/json");
       res.json({
-        result: result,
-        message: "Successfully added a new customer",
+        registered: true,
+        message: "",
       });
     })
     .catch((err) => {
-      res.status(400);
-      console.log(err);
+      console.log("Please select another email!");
+      res.type("application/json");
+      res.json({
+        registered: false,
+        message: err.message,
+      });
+      res.status(200);
     });
 };
 

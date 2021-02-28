@@ -1,17 +1,13 @@
 const db = require("../config/database");
-
 const bcrypt = require("bcrypt"); //A library to help you hash passwords.
 const saltRounds = 10;
-
-
-
 // cookie-parser is a middleware which parses cookies attached to the client request object
 // Body-parser is the Node.js body parsing middleware. It is responsible for parsing the incoming request bodies in a middleware before you handle it.
 // Session management can be done in node.js by using the express-session module. It helps in saving the data in the key-value form
-const bodyParser = require("body-parser");
-const session = require("express-session");
-const cookieParser = require("cookie-parser");
 
+/**################################################################
+                          Register Customer
+ ################################################################# */
 function registerCustomer(
   firstName,
   lastName,
@@ -20,31 +16,44 @@ function registerCustomer(
   password,
   regDate
 ) {
-  const sqlProcedure =
-    "CALL RegisterCustomer(?, ?, ?, ?, ?, ?)";
+  const sqlCheckUniqueEmail = "SELECT * FROM User WHERE email = ?";
+  const sqlProcedure = "CALL RegisterCustomer(?, ?, ?, ?, ?, ?)";
   return new Promise((resolve, reject) => {
-    bcrypt.hash(password, saltRounds, (err, hash) => {
-      if (err) {
-        console.log(err);
-      }
-      db.query(
-        sqlProcedure,
-        [email, hash, firstName, lastName, phoneNumber, regDate],
-        (error, result) => {
-          if (!!error) {
-            console.log(error);
-            reject(error);
-          } else {
-            resolve(result);
-          }
+    db.query(sqlCheckUniqueEmail, [email], (errs, res) => {
+      if (!!errs) {
+        console.log(error);
+        reject(error);
+      } else {
+        if (res.length > 0) {
+          reject({ message: "Please select another email!" });
+        } else {
+          bcrypt.hash(password, saltRounds, (err, hash) => {
+            if (err) {
+              console.log(err);
+            }
+            db.query(
+              sqlProcedure,
+              [email, hash, firstName, lastName, phoneNumber, regDate],
+              (error, result) => {
+                if (!!error) {
+                  console.log(error);
+                  reject(error);
+                } else {
+                  resolve(result);
+                }
+              }
+            );
+          });
         }
-      );
+      }
     });
   });
 }
-
+/**################################################################
+                          Login User
+ ################################################################# */
 function loginUser(email, password) {
-  const sqlSelect = "SELECT * FROM `User` WHERE email = ? ;"
+  const sqlSelect = "SELECT * FROM `User` WHERE email = ? ;";
   console.log("LoginModel is called");
   return new Promise((resolve, reject) => {
     db.query(sqlSelect, email, (error, result) => {
@@ -56,22 +65,22 @@ function loginUser(email, password) {
       if (result.length > 0) {
         bcrypt.compare(password, result[0].password, (error, response) => {
           if (response) {
-            console.log("Userfound");
             resolve(result);
           } else {
-            reject({ message: "Wrong email/password combination" });
+            reject({ message: "The password you entered is incorrect" });
           }
         });
       } else {
-        console.log("User Not found");
-        reject({ message: "User does not exist" });
+        reject({ message: "User does not exist!" });
       }
     });
   });
 }
-
+/**################################################################
+                    Get Specific Customer Details
+ ################################################################# */
 function getCustomerDetails(email) {
-  const sqlSelect = "SELECT * FROM `CustomerDetails` WHERE email = ? ;"
+  const sqlSelect = "SELECT * FROM `CustomerDetails` WHERE email = ? ;";
   return new Promise((resolve, reject) => {
     db.query(sqlSelect, email, (error, result) => {
       if (!!error) {
@@ -83,9 +92,11 @@ function getCustomerDetails(email) {
     });
   });
 }
-
+/**################################################################
+                          Get Seller Details
+ ################################################################# */
 function getSellerDetails(email) {
-  const sqlSelect = "SELECT * FROM `SellerDetails` WHERE email = ? ;"
+  const sqlSelect = "SELECT * FROM `SellerDetails` WHERE email = ? ;";
   return new Promise((resolve, reject) => {
     db.query(sqlSelect, email, (error, result) => {
       // console.log(result[0].password);
@@ -205,7 +216,6 @@ const updatePasswordNew = (newpwd,oldpwd,loggedUser) =>{
     });
   
 }
-
 
 module.exports = {
   registerCustomer,
