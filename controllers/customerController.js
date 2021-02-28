@@ -6,46 +6,30 @@ const jwt = require("jsonwebtoken");
 const authentication = require("../middleware/Authentication");
 
 
+/**################################################################
+                          Register Customer
+ ################################################################# */
+
 const registerAction = (req, res) => {
   console.log("register is called");
-
   let date_ob = new Date();
-
   // current date
   // adjust 0 before single digit date
   let date = ("0" + date_ob.getDate()).slice(-2);
-
   // current month
   let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
-
   // current year
   let year = date_ob.getFullYear();
-
   // current hours
   let hours = date_ob.getHours();
-
   // current minutes
   let minutes = date_ob.getMinutes();
-
   // current seconds
   let seconds = date_ob.getSeconds();
-
   // prints date in YYYY-MM-DD format
   // console.log(year + "-" + month + "-" + date);
-
   // prints date & time in YYYY-MM-DD HH:MM:SS format
-  let dateTime =
-    year +
-    "-" +
-    month +
-    "-" +
-    date +
-    " " +
-    hours +
-    ":" +
-    minutes +
-    ":" +
-    seconds;
+  let dateTime = year + "-" + month + "-" + date + " ";
 
   const firstName = req.body.firstName;
   const lastName = req.body.lastName;
@@ -76,6 +60,10 @@ const registerAction = (req, res) => {
       console.log(err);
     });
 };
+
+/**################################################################
+                          Login User
+ ################################################################# */
 const loginAction = (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
@@ -143,6 +131,9 @@ const loginAction = (req, res) => {
     });
 };
 
+/**################################################################
+                          User Log out
+ ################################################################# */
 const logoutAction = (req, res) => {
   if (req.session.user) {
     req.session.destroy((err) => {
@@ -150,48 +141,34 @@ const logoutAction = (req, res) => {
         console.log(err);
       } else {
         res.clearCookie("user");
-        res.redirect("/signin");
+        console.log("after cookie clear");
+        res.redirect("/");
       }
     });
   }
 };
 
+/**################################################################
+              Get User Information( Loggedin, userData)
+ ################################################################# */
 const checkLoginAction = (req, res) => {
   console.log(" Check whether user is logged in ");
   // console.log(req.cookies.user)
   if (req.cookies.user) {
-    res.send({ LoggedIn: true, user: req.session.user });
+    if (req.session.user) {
+      res.send({ LoggedIn: true, user: req.session.user });
+    } else {
+      res.send({ LoggedIn: false });
+    }
   } else {
     res.send({ LoggedIn: false });
   }
 };
-
-// const checkAuth = (req, res) => {
-//   const token = req.cookies.jwt;
-//     console.log(!token)
-//     if(!token){
-//         return res.json({
-//             auth: false,
-//             message: "Unauthorized user"
-//         })
-//     }
-//     else{
-//         jwt.verify(token,process.env.TOKEN_SECRET,(err,decoded)=>{
-
-//             if(err){
-//                 res.status(400);
-//                 res.json({auth:false, message:"Authentication failed, invalid token"});
-//             }
-//             else{
-//               res.json({auth:true, message:"You have authenticated"});
-//             }
-//         })
-//     }
-// }
-
-// Address Controllers
-
-//get all addresses
+// Addresses
+/**################################################################
+                          Get Customer Address
+ ################################################################# */
+// logged user should get from request
 const getAddressesAction = (req, res) => {
   console.log("session",req.session.user.user_id)
   Address.getAddressByUser(req.session.user.user_id)
@@ -206,8 +183,10 @@ const getAddressesAction = (req, res) => {
       res.json({ success: false, message: err });
     });
 };
-
-//insert address 
+/**################################################################
+                          Insert Address
+ ################################################################# */
+//should get address from request
 const insertAddressAction = (req, res) => {
   // console.log(req.body.Address)
   Address.insertAddress(req.body.Address, req.session.user.user_id)
@@ -223,8 +202,9 @@ const insertAddressAction = (req, res) => {
       res.json({ success: false, message: err });
     });
 };
-
-// delete address
+/**################################################################
+                          Delete Address
+ ################################################################# */
 const deleteAddressAction = (req, res) => {
   console.log(req.body.id);
   Address.deleteAddress(req.body.id)
@@ -241,8 +221,10 @@ const deleteAddressAction = (req, res) => {
 };
 
 // Bank Card Controllers
-
-// get bank card
+/**################################################################
+                          Get Bank Card
+ ################################################################# */
+// logged user should get from request
 const getBankCardsAction = (req, res) => {
   BankCard.getBankCards(req.session.user.user_id)
     .then((bankCards) => {
@@ -256,23 +238,26 @@ const getBankCardsAction = (req, res) => {
       res.json({ success: false, message: err });
     });
 };
-
-// insert bank card
+/**################################################################
+                          Insert Bank Card
+ ################################################################# */
+//should get bank card details from request
 const insertBankCardsAction = (req, res) => {
-      BankCard.insertBankCard(req.body.CardDetails, req.session.user.user_id)
-      .then((success) => {
-        res.statusCode = 200;
-        res.set("Content-Type", "application/json");
-        res.json({ success: true });
-      })
-      .catch((err) => {
-        res.statusCode = 500;
-        res.set("Content-Type", "application/json");
-        res.json({ success: false, message: err });
-      });
-    }
-
-// delete bank card
+  BankCard.insertBankCard(req.body.CardDetails, req.session.user.user_id)
+    .then((success) => {
+      res.statusCode = 200;
+      res.set("Content-Type", "application/json");
+      res.json({ success: true });
+    })
+    .catch((err) => {
+      res.statusCode = 500;
+      res.set("Content-Type", "application/json");
+      res.json({ success: false, message: err });
+    });
+};
+/**################################################################
+                          Delete Bank Card
+ ################################################################# */
 const deleteBankCardAction = (req, res) => {
   console.log(req.body);
   BankCard.deleteBankCard(req.body.card_id)
@@ -287,7 +272,9 @@ const deleteBankCardAction = (req, res) => {
       res.json({ success: false, message: err });
     });
 };
-
+/**################################################################
+                          Get User Details
+ ################################################################# */
 //Customer details controllers
 
 // get user details
@@ -314,8 +301,9 @@ const getUserDetails = (req, res) => {
       res.json({ success: false, message: err });
     });
 };
-
-//update user details
+/**################################################################
+                          Update User Details
+ ################################################################# */
 const updateUserDetailsAction = (req, res) => {
   Customer.updateUserDetails(req.body, req.session.user.user_id)
     .then((success) => {
@@ -330,7 +318,12 @@ const updateUserDetailsAction = (req, res) => {
     });
 };
 
-//update password
+
+/**################################################################
+                          Update Password
+ ################################################################# */
+
+
 const updatePasswordNew = (req,res)=>{    
   console.log(req.body.newpwd,req.body.oldpwd)
   Customer.updatePasswordNew(req.body.newpwd,req.body.oldpwd,req.session.user.user_id)
@@ -349,9 +342,11 @@ const updatePasswordNew = (req,res)=>{
 
 
 
-// Order Details
+/**################################################################
+                          Get all orders
+ ################################################################# */
 
-//get all orders
+
 const getAllOrdersAction = (req,res) =>{
   Order.getAllOrders(req.session.user.user_id)
   .then((orders)=>{
@@ -367,7 +362,10 @@ const getAllOrdersAction = (req,res) =>{
   }); 
 }
 
-//get order stats
+/**################################################################
+                          Get order stats
+ ################################################################# */
+
 const getOrderStatsAction = (req,res)=>{
   Order.getOrderStats(req.session.user.user_id)
   .then((stats)=>{
@@ -382,7 +380,11 @@ const getOrderStatsAction = (req,res)=>{
   }); 
 }
 
-//update order status
+
+/**################################################################
+                          update order status
+ ################################################################# */
+
 const updateOrderStatusAction = (req,res) =>{
   // console.log(req.body.Order_ID, req.body.Order_status)
   Order.updateOrderStatus(req.body.Order_ID, req.body.Order_status)
@@ -397,7 +399,6 @@ const updateOrderStatusAction = (req,res) =>{
     res.json({ success: false, message: err });
   }); 
 }
-
 
 
 module.exports = {
