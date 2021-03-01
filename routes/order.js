@@ -9,6 +9,11 @@ const { deleteBankCard } = require('../models/userModel');
 orderRouter.route("/feedback")
    .post(orderController.insertFeedbackAction);
 
+/* Place an order. */
+orderRouter.route("/placeorder")
+   .post(orderController.placeOrderAction);
+
+
 /* GET items listing. */
 orderRouter.route('/').get();
 
