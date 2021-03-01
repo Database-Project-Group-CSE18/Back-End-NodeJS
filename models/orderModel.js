@@ -68,9 +68,28 @@ const getOrderStats = (loggedUser)=>{
 }
 
 
+const placeOrder = ()=>{
+  return new Promise((resolve, reject) => {
+    db.query(
+      `CALL place_order()`,
+      Object.values(data),
+      (error, results, fields) => {
+        if (!error) {
+          resolve(results);
+        } else {
+          reject(error);
+        }
+      }
+    );
+  });
+}
+
+
+
 module.exports = {
     updateOrderStatus,
     addFeedback,
     getOrderStats,
-    getAllOrders
+    getAllOrders,
+    placeOrder
 }

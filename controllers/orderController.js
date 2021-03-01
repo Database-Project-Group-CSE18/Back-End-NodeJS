@@ -19,4 +19,22 @@ const insertFeedbackAction = (req,res)=>{
       });      
 }
 
+
+const placeOrderAction = (req,res)=>{
+    console.log(req.body)
+    Feedback.placeOrder()
+    .then((success)=>{
+        res.statusCode = 200;
+        res.set("Content-Type", "application/json");
+        res.json({ success: true, insertId:success.insertId});
+    })
+    .catch((err) => {
+        res.statusCode = 500;
+        res.set("Content-Type", "application/json");
+        res.json({ success: false, message: err });
+      });      
+}
+
+
 exports.insertFeedbackAction = insertFeedbackAction;
+exports.placeOrderAction = placeOrderAction;

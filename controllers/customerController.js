@@ -158,7 +158,6 @@ const logoutAction = (req, res) => {
  ################################################################# */
 const checkLoginAction = (req, res) => {
   console.log(" Check whether user is logged in ");
-  // console.log(req.cookies.user)
   if (req.cookies.user) {
     if (req.session.user) {
       res.send({ LoggedIn: true, user: req.session.user });
