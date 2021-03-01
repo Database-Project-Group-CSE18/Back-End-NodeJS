@@ -9,7 +9,7 @@ const db = require("../config/database");
 const getAllItems = () => {
   return new Promise((resolve, reject) => {
     db.query(
-      "SELECT * FROM Display_item",
+      "CALL DisplayItems()",
       (error, results, fields) => {
         if (!error) {
           resolve(results);
@@ -24,7 +24,7 @@ const getAllItems = () => {
 const getItemsByCategory = (category) => {
   return new Promise((resolve, reject) => {
     db.query(
-      `SELECT * FROM Display_item WHERE category_name = ? GROUP BY item_name`,
+      `CALL DisplayItemsByCategory(?)`,
       [category],
       (error, results, fields) => {
         if (!error) {
@@ -40,7 +40,7 @@ const getItemsByCategory = (category) => {
 const getItemByID = (id) => {
   return new Promise((resolve, reject) => {
     db.query(
-      `SELECT * FROM Display_item WHERE item_id = ? GROUP BY item_name`,
+      `CALL DisplayItemsByItemID(?)`,
       [parseInt(id)],
       (error, results, fields) => {
         if (!error) {
@@ -104,11 +104,27 @@ const getReplyByFeedbackID = (id) =>{
 const getCartItems = (id) => {
   return new Promise((resolve, reject) => {
     db.query(
-      `SELECT item.item_id, item.item_name, variant.price, cart_item.quantity, variant.variant_name AS variant, variant.image FROM cart_item 
-      JOIN variant ON cart_item.variant_ID = variant.variant_ID
-      JOIN item ON item.item_ID = variant.item_ID
-      WHERE cart_item.cart_id = ?`,
+      `SELECT item.item_id, item.item_name, Variant.price, Cart.quantity, Cart.variant_id, Variant.variant_name AS variant, Variant.image FROM Cart 
+      JOIN Variant ON Cart.variant_id = Variant.variant_id
+      JOIN Item ON item.item_id = Variant.item_id
+      WHERE Cart.cart_id = ?`,
       [id],
+      (error, results, fields) => {
+        if (!error) {
+          resolve(results);
+        } else {
+          reject(error);
+        }
+      }
+    );
+  });
+}
+
+const deleteCartItem = (user_id, variant_id) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      `DELETE FROM Cart WHERE cart_id = ? AND variant_id = ?`,
+      [user_id, variant_id],
       (error, results, fields) => {
         if (!error) {
           resolve(results);
@@ -137,10 +153,10 @@ const getAllCategories= () =>{
 
 const searchItemsInCategory = (category, item_name) => {
   
-  var query = `SELECT * FROM Display_item WHERE category = ? AND item_name LIKE ? GROUP BY item_name`;
+  var query = `SELECT * FROM Display_item WHERE category = ? AND item_name LIKE ?`;
   var values = [category, '%'+item_name+'%']
   if(category === 'All Categories'){
-    var query = `SELECT * FROM Display_item WHERE item_name LIKE ? GROUP BY item_name`;
+    var query = `SELECT * FROM Display_item WHERE item_name LIKE ?`;
     var values = ['%'+item_name+'%']
   }
 
@@ -170,6 +186,7 @@ exports.getReplyByFeedbackID =getReplyByFeedbackID;
 exports.getCartItems =getCartItems;
 exports.getAllCategories =getAllCategories;
 exports.searchItemsInCategory = searchItemsInCategory;
+exports.deleteCartItem =deleteCartItem;
 
 
 
@@ -182,7 +199,7 @@ exports.searchItemsInCategory = searchItemsInCategory;
 const addToCart = (data) => {
   return new Promise((resolve, reject) => {
     db.query(
-      `INSERT INTO Cart(cart_ID, variant_id, quantity) VALUES (?,?,?)`,
+      `INSERT INTO Cart(cart_id, variant_id, quantity, delivery_time) VALUES (?,?,?,?)`,
       Object.values(data),
       (error, results, fields) => {
         if (!error) {

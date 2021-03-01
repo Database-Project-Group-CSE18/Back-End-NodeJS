@@ -6,7 +6,7 @@ const getAllItemsAction = (req, res) => {
     .then((items) => {
       res.statusCode = 200;
       res.set("Content-Type", "application/json");
-      res.json({ success: true, items: items });
+      res.json({ success: true, items: items[0] });
     })
     .catch((err) => {
       res.statusCode = 500;
@@ -20,7 +20,7 @@ const getItemsByCategoryAction = (req, res) => {
     .then((items) => {
       res.statusCode = 200;
       res.set("Content-Type", "application/json");
-      res.json({ success: true, items: items });
+      res.json({ success: true, items: items[0] });
     })
     .catch((err) => {
       res.statusCode = 500;
@@ -32,8 +32,8 @@ const getItemsByCategoryAction = (req, res) => {
 const getItemByIDAction = (req, res) => {
   ItemModel.getItemByID(req.params.Item_id)
     .then((items) => {
-      if (items.length !== 0) {
-        item = items[0];
+      if (items[0].length !== 0) {
+        item = items[0][0];
         ItemModel.getFeedbacksByItemID(item.item_id)
           .then((feedbacks) => {
             item.feedbacks = feedbacks;
@@ -79,7 +79,8 @@ const getReplysByFbIDAction = (req, res) => {
 };
 
 const getCartItemsAction = (req, res) => {
-  ItemModel.getCartItems(req.params.cart_id)
+  console.log(req.session)
+  ItemModel.getCartItems(req.session.user.user_id)
     .then((cart) => {
       res.statusCode = 200;
       res.set("Content-Type", "application/json");
@@ -91,6 +92,21 @@ const getCartItemsAction = (req, res) => {
       res.json({ success: false, message: err });
     });
 };
+
+const deleteCartItemAction  = (req,res)=>{
+  ItemModel.deleteCartItem(req.session.user.user_id,req.params.id)
+  .then((success)=>{
+      res.statusCode = 200;
+      res.set("Content-Type", "application/json");
+      res.json({ success: true});
+  })
+  .catch((err) => {
+      res.statusCode = 500;
+      res.set("Content-Type", "application/json");
+      res.json({ success: false, message: err });
+    }); 
+}
+
 
 const getCategoriesAction = (req, res) => {
   ItemModel.getAllCategories()
@@ -132,6 +148,7 @@ exports.getReplysByFbIDAction = getReplysByFbIDAction;
 exports.getCartItemsAction = getCartItemsAction;
 exports.getCategoriesAction = getCategoriesAction;
 exports.searchItemsInCategoryAction = searchItemsInCategoryAction;
+exports.deleteCartItemAction = deleteCartItemAction;
 
 
 const addToCartAction = (req, res) => {

@@ -1,68 +1,48 @@
-const Address = require('../models/addressModel');
-const BankCard  = require('../models/bankCardModel');
+const Address = require("../models/addressModel");
+const BankCard = require("../models/bankCardModel");
 const Customer = require("../models/userModel");
+const Order = require("../models/orderModel");
 const jwt = require("jsonwebtoken");
 const authentication = require("../middleware/Authentication");
 
-var loggedUser = 2;
 
-
+/**################################################################
+                          Register Customer
+ ################################################################# */
 
 const registerAction = (req, res) => {
   console.log("register is called");
-
   let date_ob = new Date();
-
   // current date
   // adjust 0 before single digit date
   let date = ("0" + date_ob.getDate()).slice(-2);
-
   // current month
   let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
-
   // current year
   let year = date_ob.getFullYear();
-
   // current hours
   let hours = date_ob.getHours();
-
   // current minutes
   let minutes = date_ob.getMinutes();
-
   // current seconds
   let seconds = date_ob.getSeconds();
-
   // prints date in YYYY-MM-DD format
   // console.log(year + "-" + month + "-" + date);
-
   // prints date & time in YYYY-MM-DD HH:MM:SS format
-  let dateTime =
-    year +
-    "-" +
-    month +
-    "-" +
-    date +
-    " " +
-    hours +
-    ":" +
-    minutes +
-    ":" +
-    seconds;
+  let dateTime = year + "-" + month + "-" + date + " ";
 
-  const userType = "Customer";
   const firstName = req.body.firstName;
   const lastName = req.body.lastName;
   const email = req.body.email;
-  const phoneNo = req.body.phoneNumber;
+  const phoneNumber = req.body.phoneNumber;
   const password = req.body.password;
   const regDate = dateTime;
 
   Customer.registerCustomer(
-    userType,
     firstName,
     lastName,
     email,
-    phoneNo,
+    phoneNumber,
     password,
     regDate
   )
@@ -71,39 +51,80 @@ const registerAction = (req, res) => {
       console.log("Successfully added a new customer");
       res.type("application/json");
       res.json({
-        result: result,
-        message: "Successfully added a new customer",
+        registered: true,
+        message: "",
       });
     })
     .catch((err) => {
-      res.status(400);
-      console.log(err);
+      console.log("Please select another email!");
+      res.type("application/json");
+      res.json({
+        registered: false,
+        message: err.message,
+      });
+      res.status(200);
     });
 };
+
+/**################################################################
+                          Login User
+ ################################################################# */
 const loginAction = (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   console.log("loginAction is called");
-  Customer.loginCustomer(email, password)
+  Customer.loginUser(email, password)
     .then((result) => {
-      
-      // console.log(req.session.user)
+      // console.log(result);
       res.status(200);
 
-      const id= result[0].User_ID;
-      const token = jwt.sign({id}, process.env.TOKEN_SECRET, {
+      const id = result[0].user_id;
+      const token = jwt.sign({ id }, process.env.TOKEN_SECRET, {
         expiresIn: 300, //5 minutes
-      })
-      req.session.user = result;
-      res.cookie("jwt", token, {httpOnly: true, maxAge: 1000 * 60 * 60 * 24})
-      console.log(`You have Successfully Signed In!`);
-      res.type("application/json");
-      res.json({
-        auth: true, //authentication
-        token: token,
-        result: result,
-        message: `You have Successfully Signed In!`,
       });
+      if (id == 1) {
+        Customer.getSellerDetails(email)
+          .then((result) => {
+            req.session.user = result;
+            console.log(`Seller have Successfully Signed In!`);
+            res.type("application/json");
+            res.json({
+              auth: true, //authentication
+              token: token,
+              result: result,
+              message: `You have Successfully Signed In!`,
+            });
+          })
+          .catch((err) => {
+            res.json({
+              auth: false, //authentication
+              message: err.message,
+            });
+            res.status(400);
+          });
+      } else {
+        Customer.getCustomerDetails(email)
+          .then((result) => {
+            req.session.user = result;
+            console.log(`Customer have Successfully Signed In!`);
+            res.type("application/json");
+            res.json({
+              auth: true, //authentication
+              token: token,
+              result: result,
+              message: `You have Successfully Signed In!`,
+            });
+          })
+          .catch((err) => {
+            res.json({
+              auth: false, //authentication
+              message: err.message,
+            });
+            res.status(400);
+          });
+      }
+      res.cookie("jwt", token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 });
+      // res.cookie("user", result, {httpOnly: true, maxAge: 1000 * 60 * 60 * 24})
     })
     .catch((err) => {
       // console.log(err);
@@ -112,233 +133,294 @@ const loginAction = (req, res) => {
         message: err.message,
       });
       res.status(400);
-    }); 
+    });
 };
 
-const checkLoginAction = (req, res) => {
-  console.log(req.session.user)
+/**################################################################
+                          User Log out
+ ################################################################# */
+const logoutAction = (req, res) => {
   if (req.session.user) {
-    res.send( {LoggedIn: true, user : req.session.user})
-  } else {
-    res.send( {LoggedIn: false})
+    req.session.destroy((err) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.clearCookie("user");
+        console.log("after cookie clear");
+        res.redirect("/");
+      }
+    });
   }
-}
+};
 
-const checkAuth = (req, res) => {
-  const token = req.cookies.jwt;
-    console.log(!token)
-    if(!token){
-        return res.json({
-            auth: false,
-            message: "Unauthorized user"
-        })
+/**################################################################
+              Get User Information( Loggedin, userData)
+ ################################################################# */
+const checkLoginAction = (req, res) => {
+  console.log(" Check whether user is logged in ");
+  // console.log(req.cookies.user)
+  if (req.cookies.user) {
+    if (req.session.user) {
+      res.send({ LoggedIn: true, user: req.session.user });
+    } else {
+      res.send({ LoggedIn: false });
     }
-    else{
-        jwt.verify(token,process.env.TOKEN_SECRET,(err,decoded)=>{
-          
-            if(err){
-                res.status(400);
-                res.json({auth:false, message:"Authentication failed, invalid token"});
-            }
-            else{
-              res.json({auth:true, message:"You have authenticated"});
-            }
-        })
-    }
-}
-
-
-
-
-// Address Controllers
-
+  } else {
+    res.send({ LoggedIn: false });
+  }
+};
+// Addresses
+/**################################################################
+                          Get Customer Address
+ ################################################################# */
 // logged user should get from request
-const getAddressesAction = (req,res)=>{
-    Address.getAddressByUser(loggedUser)
-    .then((addresses)=>{
-        res.statusCode = 200;
-        res.set("Content-Type", "application/json");
-        res.json({ success: true, addresses: addresses });
+const getAddressesAction = (req, res) => {
+  console.log("session",req.session.user.user_id)
+  Address.getAddressByUser(req.session.user.user_id)
+    .then((addresses) => {
+      res.statusCode = 200;
+      res.set("Content-Type", "application/json");
+      res.json({ success: true, addresses: addresses });
     })
     .catch((err) => {
-        res.statusCode = 500;
-        res.set("Content-Type", "application/json");
-        res.json({ success: false, message: err });
-      });      
-}
-
+      res.statusCode = 500;
+      res.set("Content-Type", "application/json");
+      res.json({ success: false, message: err });
+    });
+};
+/**################################################################
+                          Insert Address
+ ################################################################# */
 //should get address from request
-const insertAddressAction = (req,res)=>{
-    // console.log(req.body.Address)
-    Address.insertAddress(req.body.Address,loggedUser)
-    .then((success)=>{
-        // console.log(success.insertId);
-        res.statusCode = 200;
-        res.set("Content-Type", "application/json");
-        res.json({ success: true, insertId:success.insertId});
+const insertAddressAction = (req, res) => {
+  // console.log(req.body.Address)
+  Address.insertAddress(req.body.Address, req.session.user.user_id)
+    .then((success) => {
+      // console.log(success.insertId);
+      res.statusCode = 200;
+      res.set("Content-Type", "application/json");
+      res.json({ success: true, insertId: success.insertId });
     })
     .catch((err) => {
-        res.statusCode = 500;
-        res.set("Content-Type", "application/json");
-        res.json({ success: false, message: err });
-      });      
-}
-
- 
-const deleteAddressAction  = (req,res)=>{
-    console.log(req.body);
-    Address.deleteAddress(req.body.id)
-    .then((success)=>{
-        res.statusCode = 200;
-        res.set("Content-Type", "application/json");
-        res.json({ success: true});
+      res.statusCode = 500;
+      res.set("Content-Type", "application/json");
+      res.json({ success: false, message: err });
+    });
+};
+/**################################################################
+                          Delete Address
+ ################################################################# */
+const deleteAddressAction = (req, res) => {
+  console.log(req.body.id);
+  Address.deleteAddress(req.body.id)
+    .then((success) => {
+      res.statusCode = 200;
+      res.set("Content-Type", "application/json");
+      res.json({ success: true });
     })
     .catch((err) => {
-        res.statusCode = 500;
-        res.set("Content-Type", "application/json");
-        res.json({ success: false, message: err });
-      }); 
-}
-
+      res.statusCode = 500;
+      res.set("Content-Type", "application/json");
+      res.json({ success: false, message: err });
+    });
+};
 
 // Bank Card Controllers
-
+/**################################################################
+                          Get Bank Card
+ ################################################################# */
 // logged user should get from request
-const getBankCardsAction = (req,res)=>{
-    BankCard.getBankCards(loggedUser)
-    .then((bankCards)=>{
-        res.statusCode = 200;
-        res.set("Content-Type", "application/json");
-        res.json({ success: true, bankCards: bankCards });
+const getBankCardsAction = (req, res) => {
+  BankCard.getBankCards(req.session.user.user_id)
+    .then((bankCards) => {
+      res.statusCode = 200;
+      res.set("Content-Type", "application/json");
+      res.json({ success: true, bankCards: bankCards });
     })
     .catch((err) => {
-        res.statusCode = 500;
-        res.set("Content-Type", "application/json");
-        res.json({ success: false, message: err });
-      });      
-}
-
+      res.statusCode = 500;
+      res.set("Content-Type", "application/json");
+      res.json({ success: false, message: err });
+    });
+};
+/**################################################################
+                          Insert Bank Card
+ ################################################################# */
 //should get bank card details from request
-const insertBankCardsAction = (req,res)=>{
-    BankCard.insertBankCard(req.body.CardDetails,loggedUser)
-    .then((success)=>{
-        res.statusCode = 200;
-        res.set("Content-Type", "application/json");
-        res.json({ success: true});
+const insertBankCardsAction = (req, res) => {
+  BankCard.insertBankCard(req.body.CardDetails, req.session.user.user_id)
+    .then((success) => {
+      res.statusCode = 200;
+      res.set("Content-Type", "application/json");
+      res.json({ success: true });
     })
     .catch((err) => {
-        res.statusCode = 500;
-        res.set("Content-Type", "application/json");
-        res.json({ success: false, message: err });
-      });      
-}
-
-
-const deleteBankCardAction  = (req,res)=>{
-    console.log(req.body);
-    BankCard.deleteBankCard(req.body.cardNumber)
-    .then((success)=>{
-        res.statusCode = 200;
-        res.set("Content-Type", "application/json");
-        res.json({ success: true});
+      res.statusCode = 500;
+      res.set("Content-Type", "application/json");
+      res.json({ success: false, message: err });
+    });
+};
+/**################################################################
+                          Delete Bank Card
+ ################################################################# */
+const deleteBankCardAction = (req, res) => {
+  console.log(req.body);
+  BankCard.deleteBankCard(req.body.card_id)
+    .then((success) => {
+      res.statusCode = 200;
+      res.set("Content-Type", "application/json");
+      res.json({ success: true });
     })
     .catch((err) => {
-        res.statusCode = 500;
-        res.set("Content-Type", "application/json");
-        res.json({ success: false, message: err });
-      }); 
-}
-
-
+      res.statusCode = 500;
+      res.set("Content-Type", "application/json");
+      res.json({ success: false, message: err });
+    });
+};
+/**################################################################
+                          Get User Details
+ ################################################################# */
 //Customer details controllers
 
-const getUserDetails = (req,res)=>{
-    Customer.getUserDetails(loggedUser)
-    .then((user)=>{  
-        Customer.getOrderNumbers(loggedUser).then(
-            (det)=>{  
-                console.log(det,user);
-                res.statusCode = 200;
-                res.set("Content-Type", "application/json");
-                res.json({ success: true, user: user, det:det});
-            })
-            .catch((err) => {
-                res.statusCode = 500;
-                res.set("Content-Type", "application/json");
-                res.json({ success: false, message: err });
-              });   
-        
+// get user details
+const getUserDetails = (req, res) => {
+  Customer.getUserDetails(req.session.user.user_id)
+    .then((user) => {
+      Customer.getOrderNumbers(req.session.user.user_id)
+        .then((det) => {
+          console.log("det",det)
+          console.log(det, user);
+          res.statusCode = 200;
+          res.set("Content-Type", "application/json");
+          res.json({ success: true, user: user, det: det });
+        })
+        .catch((err) => {
+          res.statusCode = 500;
+          res.set("Content-Type", "application/json");
+          res.json({ success: false, message: err });
+        });
     })
     .catch((err) => {
-        res.statusCode = 500;
-        res.set("Content-Type", "application/json");
-        res.json({ success: false, message: err });
-      });      
+      res.statusCode = 500;
+      res.set("Content-Type", "application/json");
+      res.json({ success: false, message: err });
+    });
+};
+/**################################################################
+                          Update User Details
+ ################################################################# */
+const updateUserDetailsAction = (req, res) => {
+  Customer.updateUserDetails(req.body, req.session.user.user_id)
+    .then((success) => {
+      res.statusCode = 200;
+      res.set("Content-Type", "application/json");
+      res.json({ success: true });
+    })
+    .catch((err) => {
+      res.statusCode = 500;
+      res.set("Content-Type", "application/json");
+      res.json({ success: false, message: err });
+    });
+};
+
+
+/**################################################################
+                          Update Password
+ ################################################################# */
+
+
+const updatePasswordNew = (req,res)=>{    
+  console.log(req.body.newpwd,req.body.oldpwd)
+  Customer.updatePasswordNew(req.body.newpwd,req.body.oldpwd,req.session.user.user_id)
+  .then((success) => {
+          res.statusCode = 200;
+          res.set("Content-Type", "application/json");
+          res.json({ success: true });
+        })
+        .catch((err) => {
+          res.statusCode = 500;
+          res.set("Content-Type", "application/json");
+          console.log("err_msg",err)
+          res.json({ success: false, message: err.message });
+        });
 }
 
 
 
-const updateUserDetailsAction  = (req,res)=>{
-    Customer.updateUserDetails(req.body,loggedUser)
-    .then((success)=>{
-        res.statusCode = 200;
-        res.set("Content-Type", "application/json");
-        res.json({ success: true});
-    })
-    .catch((err) => {
-        res.statusCode = 500;
-        res.set("Content-Type", "application/json");
-        res.json({ success: false, message: err });
-      }); 
+/**################################################################
+                          Get all orders
+ ################################################################# */
+
+
+const getAllOrdersAction = (req,res) =>{
+  Order.getAllOrders(req.session.user.user_id)
+  .then((orders)=>{
+    res.statusCode = 200;
+    res.set("Content-Type", "application/json");
+    // console.log(orders);
+    res.json({ success: true, orders:orders});
+})
+.catch((err) => {
+    res.statusCode = 500;
+    res.set("Content-Type", "application/json");
+    res.json({ success: false, message: err });
+  }); 
 }
 
-const getPwdAction = (req,res)=>{
-    Customer.getPwd(loggedUser)
-    .then((pwd)=>{
-        res.statusCode = 200;
-        res.set("Content-Type", "application/json");
-        res.json({ success: true, pwd:pwd});
-    })
-    .catch((err) => {
-        res.statusCode = 500;
-        res.set("Content-Type", "application/json");
-        res.json({ success: false, message: err });
-      }); 
+/**################################################################
+                          Get order stats
+ ################################################################# */
+
+const getOrderStatsAction = (req,res)=>{
+  Order.getOrderStats(req.session.user.user_id)
+  .then((stats)=>{
+    res.statusCode = 200;
+    res.set("Content-Type", "application/json");
+    res.json({ success: true, stats:stats});
+})
+.catch((err) => {
+    res.statusCode = 500;
+    res.set("Content-Type", "application/json");
+    res.json({ success: false, message: err });
+  }); 
 }
 
 
-const updatePasswordAction = (req,res)=>{
-    console.log(req.body);
-    Customer.updatePassword(req.body.newpwd,loggedUser)
-    .then((success)=>{
-        res.statusCode = 200;
-        res.set("Content-Type", "application/json");
-        res.json({ success: true});
-    })
-    .catch((err) => {
-        res.statusCode = 500;
-        res.set("Content-Type", "application/json");
-        res.json({ success: false, message: err });
-      }); 
-}
+/**################################################################
+                          update order status
+ ################################################################# */
 
+const updateOrderStatusAction = (req,res) =>{
+  // console.log(req.body.Order_ID, req.body.Order_status)
+  Order.updateOrderStatus(req.body.Order_ID, req.body.Order_status)
+  .then((stats)=>{
+    res.statusCode = 200;
+    res.set("Content-Type", "application/json");
+    res.json({ success: true});
+})
+.catch((err) => {
+    res.statusCode = 500;
+    res.set("Content-Type", "application/json");
+    res.json({ success: false, message: err });
+  }); 
+}
 
 
 module.exports = {
-registerAction,
-loginAction,
-checkLoginAction,
-checkAuth,
-    getAddressesAction,
-    insertAddressAction,
-    deleteAddressAction,
-    getBankCardsAction,
-    insertBankCardsAction,
-    deleteBankCardAction,
-    updateUserDetailsAction,
-    getUserDetails,
-    updatePasswordAction,
-    getPwdAction
-
+  registerAction,
+  loginAction,
+  checkLoginAction,
+  logoutAction,
+  getAddressesAction,
+  insertAddressAction,
+  deleteAddressAction,
+  getBankCardsAction,
+  insertBankCardsAction,
+  deleteBankCardAction,
+  updateUserDetailsAction,
+  getUserDetails,
+  updatePasswordNew,
+  getOrderStatsAction,
+  getAllOrdersAction,
+  updateOrderStatusAction
 };
-

@@ -28,7 +28,7 @@ app.use(logger("dev"));
 // This is to allow our api for cross-origin resource sharing (To communicate with front end. It is in another server)
 app.use(cors( {
   origin: ["http://localhost:3000"],
-  methods : ["GET", "POST"], // The methods that we will use
+  methods : ["GET", "POST","PUT","DELETE"], // The methods that we will use
   credentials: true // Allow cookie to be enabled
 }));
 
@@ -43,9 +43,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 //save cookie
 app.use(session({
-  key: "email",
+  key: "user",
   secret: "database_project",
-  resave: true,
+  resave: false,
   saveUninitialized: false,
   cookie: { 
     expires: 1000 * 60 * 60 * 24, // After 24 hours
