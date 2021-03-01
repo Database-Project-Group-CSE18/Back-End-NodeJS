@@ -112,7 +112,7 @@ const getCategoriesAction = (req, res) => {
 
 
 const searchItemsInCategoryAction = (req, res) => {
-  ItemModel.searchItemsInCategory(req.body.category, req.body.item_name)
+  ItemModel.searchItemsInCategory(req.body.category ,req.body.item_name)
     .then((cart) => {
       res.statusCode = 200;
       res.set("Content-Type", "application/json");
@@ -150,3 +150,5 @@ const addToCartAction = (req, res) => {
 };
 
 exports.addToCartAction = addToCartAction;
+
+

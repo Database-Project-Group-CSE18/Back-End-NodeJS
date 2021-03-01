@@ -4,24 +4,24 @@ const orderController = require('../controllers/orderController');
 const { deleteBankCard } = require('../models/userModel');
 
 
-/*orderRouter.route('/').get(OrderController.getAllOrdersAction)
-.post(OrderController.searchOrdersInOrderlist);
+orderRouter.route('/').get(orderController.getAllOrdersAction)
+  .post(orderController.searchOrdersInOrderlist);
 
-orderRouter.route("/categories")
-   .get(orderController.getAwaitingPayment)
+orderRouter.route("/awaitingshipments")
+   .get(orderController.getAwaitingShipmentsAction)
 
-orderRouter.route("/search/:category")
-  .get(orderController.getgetAwaitingDeliveries);
+orderRouter.route("/awaitingdeliveries")
+  .get(orderController.getAwaitingDeliveriesAction);
 
-orderRouter.route("/specificitem/:Item_id")
-  .get(orderController.getAwaiting)
+orderRouter.route("/returns")
+  .get(orderController.getReturnsAction)
 
-orderRouter.route("/specificitem/replys/:Fb_id")
-  .get(orderController.getItemByIDAction);
+orderRouter.route("/cancellations")
+  .get(orderController.getCancellationsAction);
 
-orderRouter.route("/specificitem/addtocart")
-  .post(orderController.addToCartAction);
+orderRouter.route("/delivered")
+  .get(orderController.getReceivedAction);
 
-module.exports = orderRouter;*/
+module.exports = orderRouter;
 
 
