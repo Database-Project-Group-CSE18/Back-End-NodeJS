@@ -9,7 +9,7 @@ const db = require("../config/database");
 const getAllItems = () => {
   return new Promise((resolve, reject) => {
     db.query(
-      "SELECT * FROM Display_item",
+      "CALL DisplayItems()",
       (error, results, fields) => {
         if (!error) {
           resolve(results);
@@ -24,7 +24,7 @@ const getAllItems = () => {
 const getItemsByCategory = (category) => {
   return new Promise((resolve, reject) => {
     db.query(
-      `SELECT * FROM Display_item WHERE category_name = ?`,
+      `CALL DisplayItemsByCategory(?)`,
       [category],
       (error, results, fields) => {
         if (!error) {
@@ -40,7 +40,7 @@ const getItemsByCategory = (category) => {
 const getItemByID = (id) => {
   return new Promise((resolve, reject) => {
     db.query(
-      `SELECT * FROM Display_item WHERE item_id = ?`,
+      `CALL DisplayItemsByItemID(?)`,
       [parseInt(id)],
       (error, results, fields) => {
         if (!error) {
@@ -199,7 +199,7 @@ exports.deleteCartItem =deleteCartItem;
 const addToCart = (data) => {
   return new Promise((resolve, reject) => {
     db.query(
-      `INSERT INTO Cart(cart_id, variant_id, quantity) VALUES (?,?,?)`,
+      `INSERT INTO Cart(cart_id, variant_id, quantity, delivery_time) VALUES (?,?,?,?)`,
       Object.values(data),
       (error, results, fields) => {
         if (!error) {

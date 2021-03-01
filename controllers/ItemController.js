@@ -1,14 +1,12 @@
 const ItemModel = require("../models/ItemModel");
 const db = require("../config/database");
 
-const currentUser = 3;
-
 const getAllItemsAction = (req, res) => {
   ItemModel.getAllItems()
     .then((items) => {
       res.statusCode = 200;
       res.set("Content-Type", "application/json");
-      res.json({ success: true, items: items });
+      res.json({ success: true, items: items[0] });
     })
     .catch((err) => {
       res.statusCode = 500;
@@ -22,7 +20,7 @@ const getItemsByCategoryAction = (req, res) => {
     .then((items) => {
       res.statusCode = 200;
       res.set("Content-Type", "application/json");
-      res.json({ success: true, items: items });
+      res.json({ success: true, items: items[0] });
     })
     .catch((err) => {
       res.statusCode = 500;
@@ -34,8 +32,8 @@ const getItemsByCategoryAction = (req, res) => {
 const getItemByIDAction = (req, res) => {
   ItemModel.getItemByID(req.params.Item_id)
     .then((items) => {
-      if (items.length !== 0) {
-        item = items[0];
+      if (items[0].length !== 0) {
+        item = items[0][0];
         ItemModel.getFeedbacksByItemID(item.item_id)
           .then((feedbacks) => {
             item.feedbacks = feedbacks;
@@ -81,7 +79,8 @@ const getReplysByFbIDAction = (req, res) => {
 };
 
 const getCartItemsAction = (req, res) => {
-  ItemModel.getCartItems(currentUser)
+  console.log(req.session)
+  ItemModel.getCartItems(req.session.user.user_id)
     .then((cart) => {
       res.statusCode = 200;
       res.set("Content-Type", "application/json");
@@ -95,7 +94,7 @@ const getCartItemsAction = (req, res) => {
 };
 
 const deleteCartItemAction  = (req,res)=>{
-  ItemModel.deleteCartItem(currentUser,req.params.id)
+  ItemModel.deleteCartItem(req.session.user.user_id,req.params.id)
   .then((success)=>{
       res.statusCode = 200;
       res.set("Content-Type", "application/json");
