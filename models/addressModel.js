@@ -3,7 +3,7 @@ const db = require('../config/database');
 
 const getAddressByUser = (user_id) => {
     return new Promise((resolve, reject) => {
-      const query = "SELECT * FROM Address where User_ID = ?";
+      const query = "SELECT * FROM Address where customer_id = ?";
       db.query(query, [user_id],
       (error, results, fields) => {
         if (!error) {
@@ -17,10 +17,10 @@ const getAddressByUser = (user_id) => {
   
 
 const insertAddress = (address,loggedUser)=>{
-  console.log(address);
+  // console.log(address);
     return new Promise((resolve, reject) => {
-      const query = "INSERT INTO Address (User_ID,First_Name,Last_Name,Street,City,State,ZIP) VALUES (?,?,?,?,?,?,?)";
-        db.query(query, [loggedUser,address.First_Name,address.Last_Name,address.Street,address.City,address.State,address.ZIP],
+      const query = "INSERT INTO Address (customer_id,first_Name,last_Name,street,city,state,zip) VALUES (?,?,?,?,?,?,?)";
+        db.query(query, [loggedUser,address.first_Name,address.last_Name,address.street,address.city,address.state,address.zip],
         (error, results, fields) => {
           if (!error) {
             resolve(results);

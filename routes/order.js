@@ -2,7 +2,17 @@ const express = require('express');
 const orderRouter = express.Router();
 const orderController = require('../controllers/orderController');
 const { deleteBankCard } = require('../models/userModel');
+// const { deleteBankCard } = require('../model/customerModel');
+const { deleteBankCard } = require('../models/userModel');
 
+/*Feedback routes*/
+
+orderRouter.route("/feedback")
+   .post(orderController.insertFeedbackAction);
+   
+/* Place an order. */
+orderRouter.route("/placeorder")
+   .post(orderController.placeOrderAction);
 
 orderRouter.route('/').get(orderController.getAllOrdersAction)
   .post(orderController.searchOrdersInOrderlist);
