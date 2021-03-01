@@ -16,6 +16,8 @@ function registerCustomer(
   password,
   regDate
 ) {
+  const sqlInsert =
+    "INSERT INTO user (User_Type, First_name, Last_name, email, Phone_No, Password, Cart_ID, Reg_Date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
   const sqlCheckUniqueEmail = "SELECT * FROM User WHERE email = ?";
   const sqlProcedure = "CALL RegisterCustomer(?, ?, ?, ?, ?, ?)";
   return new Promise((resolve, reject) => {
