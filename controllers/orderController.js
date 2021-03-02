@@ -96,7 +96,7 @@ const getReturnsAction = (req, res) => {
 
 const Feedback = require('../models/orderModel');
 
-var loggedUser = 1;
+//var loggedUser = 1;
 
 let date_ob = new Date();
 // current date
@@ -107,6 +107,21 @@ let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
 // current year
 let year = date_ob.getFullYear();
 
+//should get feedback from request
+const insertFeedbackAction = (req,res)=>{
+    console.log(req.body)
+    Feedback.addFeedback(req.body,req.session.user.user_id)
+    .then((success)=>{
+        res.statusCode = 200;
+        res.set("Content-Type", "application/json");
+        res.json({ success: true, insertId:success.insertId});
+    })
+    .catch((err) => {
+        res.statusCode = 500;
+        res.set("Content-Type", "application/json");
+        res.json({ success: false, message: err });
+      });      
+}
 let dateTime = year + "-" + month + "-" + date + " ";
 
 //should get feedback from request

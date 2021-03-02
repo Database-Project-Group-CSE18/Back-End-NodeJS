@@ -41,7 +41,7 @@ const getAllOrders = (loggedUser)=>{
 const addFeedback = (feedback,loggedUser)=>{
   console.log(feedback);
     return new Promise((resolve, reject) => {
-      const query = "INSERT INTO feedback (User_ID,Item_ID,Order_ID,Rate,Comment) VALUES (?,?,?,?,?)";
+      const query = "INSERT INTO feedback (customer_id,item_id,order_id,rate,comment) VALUES (?,?,?,?,?)";
         db.query(query, [loggedUser,feedback.Item_ID,feedback.Order_ID,feedback.Rating,feedback.Comment],
         (error, results, fields) => {
           if (!error) {
