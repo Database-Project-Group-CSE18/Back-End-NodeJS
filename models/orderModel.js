@@ -128,7 +128,7 @@ const getOrderItemsDetails = (order_id)=>{
 const getAllSellerOrders = () => {
   return new Promise((resolve, reject) => {
     db.query(
-      "SELECT * FROM `order` JOIN `orderitem` ON  `order`.`order_id`=`orderitem`.`order_id` JOIN  `variant` ON `variant`.`variant_id`=`orderitem`.`variant_id`  JOIN `item` ON  `item`.`item_id`=`variant`.`item_id` JOIN `user` ON `user`.`user_id` = `order`.`customer_id` ORDER BY `order`.`ordered_date`",
+      "SELECT `order`.`order_id`,`Order`.`order_status`,`user`.`first_name`,`user`.`last_name`,`variant`.`variant_name`,`variant`.`image`,`variant`.`price`, `orderitem`.`quantity`,`item`.`item_name`,`order`.`ordered_date` FROM `order` JOIN `orderitem` ON  `order`.`order_id`=`orderitem`.`order_id` JOIN  `variant` ON `variant`.`variant_id`=`orderitem`.`variant_id`  JOIN `item` ON  `item`.`item_id`=`variant`.`item_id` JOIN `user` ON `user`.`user_id` = `order`.`customer_id` ORDER BY `order`.`ordered_date` DESC" ,
       (error, results, fields) => {
         if (!error) {
           resolve(results);
@@ -140,10 +140,10 @@ const getAllSellerOrders = () => {
   });
 };
 
-const searchOrders = (item_name) => {
-  
-  var query ="SELECT * FROM `order` NATURAL JOIN `orderitem` NATURAL JOIN `variant` NATURAL JOIN `item` JOIN `user` ON `user`.`user_id` = `order`.`customer_id` ORDER BY `order`.`ordered_date`";
-  var values = ['%'+item_name+'%']
+const searchOrders = (order_id) => {
+  console.log(order_id)
+  var query ="SELECT `order`.`order_id`,`Order`.`order_status`,`user`.`first_name`,`user`.`last_name`,`variant`.`variant_name`,`variant`.`image`,`variant`.`price`, `orderitem`.`quantity`,`item`.`item_name`,`order`.`ordered_date` FROM `order` JOIN `orderitem` ON  `order`.`order_id`=`orderitem`.`order_id` JOIN  `variant` ON `variant`.`variant_id`=`orderitem`.`variant_id`  JOIN `item` ON  `item`.`item_id`=`variant`.`item_id` JOIN `user` ON `user`.`user_id` = `order`.`customer_id` WHERE `order`.`order_id` LIKE ? ORDER BY `order`.`ordered_date` DESC" ;
+  var values = ['%'+order_id+'%']
  
 
   return new Promise((resolve, reject) => {
@@ -163,7 +163,7 @@ const searchOrders = (item_name) => {
 const getAwaitingShipments = () => {
   return new Promise((resolve, reject) => {
     db.query(
-      "SELECT * FROM `order` NATURAL JOIN `orderitem` NATURAL JOIN `variant` NATURAL JOIN `item` JOIN `user` ON `user`.`user_id` = `order`.`customer_id` where order_status=`paid` ORDER BY `order`.`ordered_date`",
+      "SELECT `order`.`order_id`,`user`.`first_name`,`Order`.`order_status`,`user`.`last_name`,`variant`.`variant_name`,`variant`.`image`,`variant`.`price`, `orderitem`.`quantity`,`item`.`item_name`,`order`.`ordered_date` FROM `order` JOIN `orderitem` ON  `order`.`order_id`=`orderitem`.`order_id` JOIN  `variant` ON `variant`.`variant_id`=`orderitem`.`variant_id`  JOIN `item` ON  `item`.`item_id`=`variant`.`item_id` JOIN `user` ON `user`.`user_id` = `order`.`customer_id` WHERE `order`.`order_status`='paid' ORDER BY `order`.`ordered_date` DESC" ,
       (error, results, fields) => {
         if (!error) {
           resolve(results);
@@ -177,8 +177,7 @@ const getAwaitingShipments = () => {
 const getAwaitingDeliveries = () => {
   return new Promise((resolve, reject) => {
     db.query(
-      "SELECT * FROM `order` NATURAL JOIN `orderitem` NATURAL JOIN `variant` NATURAL JOIN `item` JOIN `user` ON `user`.`user_id` = `order`.`customer_id` where order_status=`shipped` ORDER BY `order`.`ordered_date`",
-      (error, results, fields) => {
+      "SELECT `order`.`order_id`,`user`.`first_name`,`Order`.`order_status`,`user`.`last_name`,`variant`.`variant_name`,`variant`.`image`,`variant`.`price`, `orderitem`.`quantity`,`item`.`item_name`,`order`.`ordered_date` FROM `order` JOIN `orderitem` ON  `order`.`order_id`=`orderitem`.`order_id` JOIN  `variant` ON `variant`.`variant_id`=`orderitem`.`variant_id`  JOIN `item` ON  `item`.`item_id`=`variant`.`item_id` JOIN `user` ON `user`.`user_id` = `order`.`customer_id` WHERE `order_status`='shipped' ORDER BY `order`.`ordered_date` DESC" ,      (error, results, fields) => {
         if (!error) {
           resolve(results);
         } else {
@@ -191,7 +190,7 @@ const getAwaitingDeliveries = () => {
 const getCancellations = () => {
   return new Promise((resolve, reject) => {
     db.query(
-      "SELECT * FROM `order` NATURAL JOIN `orderitem` NATURAL JOIN `variant` NATURAL JOIN `item` JOIN `user` ON `user`.`user_id` = `order`.`customer_id` where order_status=`cancelled` ORDER BY `order`.`ordered_date`",
+      "SELECT `order`.`order_id`,`user`.`first_name`,`Order`.`order_status`,`user`.`last_name`,`variant`.`variant_name`,`variant`.`image`,`variant`.`price`, `orderitem`.`quantity`,`item`.`item_name`,`order`.`ordered_date` FROM `order` JOIN `orderitem` ON  `order`.`order_id`=`orderitem`.`order_id` JOIN  `variant` ON `variant`.`variant_id`=`orderitem`.`variant_id`  JOIN `item` ON  `item`.`item_id`=`variant`.`item_id` JOIN `user` ON `user`.`user_id` = `order`.`customer_id` WHERE `order_status`='cancelled' ORDER BY `order`.`ordered_date` DESC" ,
       (error, results, fields) => {
         if (!error) {
           resolve(results);
@@ -205,7 +204,7 @@ const getCancellations = () => {
 const getReturns = () => {
   return new Promise((resolve, reject) => {
     db.query(
-      "SELECT * FROM `order` NATURAL JOIN `orderitem` NATURAL JOIN `variant` NATURAL JOIN `item` JOIN `user` ON `user`.`user_id` = `order`.`customer_id` where order_status=`returned` ORDER BY `order`.`ordered_date`",
+      "SELECT `order`.`order_id`,`user`.`first_name`,`Order`.`order_status`,`user`.`last_name`,`variant`.`variant_name`,`variant`.`image`,`variant`.`price`, `orderitem`.`quantity`,`item`.`item_name`,`order`.`ordered_date` FROM `order` JOIN `orderitem` ON  `order`.`order_id`=`orderitem`.`order_id` JOIN  `variant` ON `variant`.`variant_id`=`orderitem`.`variant_id`  JOIN `item` ON  `item`.`item_id`=`variant`.`item_id` JOIN `user` ON `user`.`user_id` = `order`.`customer_id` WHERE `order_status`='returned' ORDER BY `order`.`ordered_date` DESC" ,
       (error, results, fields) => {
         if (!error) {
           resolve(results);
@@ -219,7 +218,7 @@ const getReturns = () => {
 const getReceived = () => {
   return new Promise((resolve, reject) => {
     db.query(
-      "SELECT * FROM `order` NATURAL JOIN `orderitem` NATURAL JOIN `variant` NATURAL JOIN `item` JOIN `user` ON `user`.`user_id` = `order`.`customer_id` where order_status=`delivered` ORDER BY `order`.`ordered_date`",
+      "SELECT `order`.`order_id`,`user`.`first_name`,`Order`.`order_status`,`user`.`last_name`,`variant`.`variant_name`,`variant`.`image`,`variant`.`price`, `orderitem`.`quantity`,`item`.`item_name`,`order`.`ordered_date` FROM `order` JOIN `orderitem` ON  `order`.`order_id`=`orderitem`.`order_id` JOIN  `variant` ON `variant`.`variant_id`=`orderitem`.`variant_id`  JOIN `item` ON  `item`.`item_id`=`variant`.`item_id` JOIN `user` ON `user`.`user_id` = `order`.`customer_id` WHERE `order_status`='delivered' ORDER BY `order`.`ordered_date` DESC" ,
       (error, results, fields) => {
         if (!error) {
           resolve(results);
@@ -230,6 +229,28 @@ const getReceived = () => {
     );
   });
 };
+
+
+const markasShipped = (order_id,shipped_date) => {
+  
+  var query ="UPDATE `order` set `order_status`='shipped', `shipped_date`=? Where `order_id`=?" ;
+  var values = [shipped_date,order_id]
+ 
+
+  return new Promise((resolve, reject) => {
+    db.query(
+      query,
+      values,
+      (error, results, fields) => {
+        if (!error) {
+          resolve(results);
+        } else {
+          reject(error);
+        }
+      }
+    );
+  });
+}
 
 
 module.exports = {
@@ -245,5 +266,6 @@ module.exports = {
   addFeedback,
   getOrderStats,
   getAllSellerOrders,
-  placeOrder
+  placeOrder,
+  markasShipped
 }
