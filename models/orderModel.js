@@ -73,11 +73,11 @@ const getOrderStats = (loggedUser)=>{
 }
 
 
-const placeOrder = ()=>{
+const placeOrder = (data, userid, date)=>{
   return new Promise((resolve, reject) => {
     db.query(
-      `CALL place_order()`,
-      Object.values(data),
+      `CALL PlaceOrder(?,?,?,?,?,?)`,
+      [userid, data.order_address, data.order_status, data.payment_method, date, data.order_total],
       (error, results, fields) => {
         if (!error) {
           resolve(results);
@@ -88,6 +88,40 @@ const placeOrder = ()=>{
     );
   });
 }
+
+const getOrderDetails = (order_id)=>{
+  return new Promise((resolve, reject) => {
+    db.query(
+      "SELECT `Order`.`order_id` AS `order_id`, `Order`.`order_status` AS `order_status`, `Order`.`ordered_date` AS `order_date`, `Order`.`payment_method` AS `payment_method`,`Order`.`ordered_date` AS `ordered_date`,`Order`.`tracking_number` AS `tracking_number`, `Order`.`order_total` AS `order_total`, `OrderAddress`.`first_name` AS `address_firstname`,`OrderAddress`.`last_name` AS `address_lastname`,`OrderAddress`.`state` AS `state`,`OrderAddress`.`city` AS `city`,`OrderAddress`.`street` AS `street`,`OrderAddress`.`zip` AS `zip`,`User`.`email` AS `email`,`User`.`first_name` AS `firstname`,`User`.`last_name` AS `lastname`,`User`.`phone_number` AS `phone_number` FROM `Order` JOIN `OrderAddress` ON `Order`.`order_id` = `OrderAddress`.`address_id` JOIN `User` ON `Order`.`customer_id` = `User`.`user_id` WHERE `Order`.`order_id` = ?",
+      [order_id],
+      (error, results, fields) => {
+        if (!error) {
+          resolve(results);
+        } else {
+          reject(error);
+        }
+      }
+    );
+  });
+}
+
+const getOrderItemsDetails = (order_id)=>{
+  return new Promise((resolve, reject) => {
+    db.query(
+      "SELECT `OrderItem`.`delivery_time` AS `delivery_time`, `OrderItem`.`quantity` AS `ordered_quantity`, `Variant`.`variant_name` AS `variant_name`, `Variant`.`price` AS `price`, `Variant`.`color` AS `color`, `Variant`.`size` AS `size`, `Variant`.`image` AS `image`, `Item`.`item_name` AS `item_name` FROM `OrderItem` JOIN `Variant` ON `OrderItem`.`variant_id` = `Variant`.`variant_id` JOIN `Item` ON `Item`.`item_id` = `Variant`.`item_id` WHERE `order_id` = ?",
+      [order_id],
+      (error, results, fields) => {
+        if (!error) {
+          resolve(results);
+        } else {
+          reject(error);
+        }
+      }
+    );
+  });
+}
+
+
 
 
 

@@ -29,6 +29,10 @@ orderRouter.route("/returns")
 orderRouter.route("/cancellations")
   .get(orderController.getCancellationsAction);
 
+/* GET items listing. */
+orderRouter.route('/orderdetails/:order_id').
+    get(orderController.getOrderDetailsAction);
+
 orderRouter.route("/delivered")
   .get(orderController.getReceivedAction);
 
