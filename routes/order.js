@@ -17,6 +17,10 @@ orderRouter.route("/placeorder")
 /* GET items listing. */
 orderRouter.route('/').get();
 
+/* GET items listing. */
+orderRouter.route('/orderdetails/:order_id').
+    get(orderController.getOrderDetailsAction);
+
 
 module.exports = orderRouter;
 
