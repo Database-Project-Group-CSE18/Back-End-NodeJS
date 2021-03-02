@@ -1,12 +1,12 @@
 const Feedback = require('../models/orderModel');
 
-var loggedUser = 1;
+//var loggedUser = 1;
 
 
 //should get feedback from request
 const insertFeedbackAction = (req,res)=>{
-    //console.log(req.body)
-    Feedback.addFeedback(req.body,loggedUser)
+    console.log(req.body)
+    Feedback.addFeedback(req.body,req.session.user.user_id)
     .then((success)=>{
         res.statusCode = 200;
         res.set("Content-Type", "application/json");

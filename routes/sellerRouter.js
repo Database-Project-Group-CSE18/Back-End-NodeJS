@@ -1,9 +1,21 @@
 var express = require('express');
-var router = express.Router();
+var sellerRouter = express.Router();
+const sellerController = require('../controllers/sellerController');
 
-/* GET users listing. */
-// router.get('/', function(req, res, next) {
-//   res.send('respond with a resource');
-// });
 
-module.exports = router;
+/**################################################################
+            Routes for get/put seller details to the DB
+ ################################################################# */
+ 
+sellerRouter.route("/changeSellerDetails")
+    .put(sellerController.insertsellerdata)
+    .get(sellerController.getsellerdata)
+
+/**################################################################
+            Router for put new password to the DB
+ ################################################################# */
+ 
+sellerRouter.route("/changeSellerPassword")
+    .put(sellerController.changePassword)
+
+module.exports = sellerRouter;
