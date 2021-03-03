@@ -9,6 +9,7 @@ const getAllItemsAction = (req, res) => {
       res.json({ success: true, items: items[0] });
     })
     .catch((err) => {
+      console.log(err)
       res.statusCode = 500;
       res.set("Content-Type", "application/json");
       res.json({ success: false, message: err });
@@ -193,14 +194,16 @@ const addNewItemAction = (req, res) => {
       res.json({ success: false, message: err });
     });
 };
+module.exports = {
+  addToCartAction,
+  getAllItemsAction,
+  getItemsByCategoryAction,
+  getItemByIDAction,
+  getReplysByFbIDAction,
+  getCategoriesAction,
+  searchItemsInCategoryAction,
+  deleteCartItemAction,
+  addNewItemAction,
+  getCartItemsAction
+}
 
-exports.addToCartAction = addToCartAction;
-exports.getAllItemsAction = getAllItemsAction;
-exports.getItemsByCategoryAction = getItemsByCategoryAction;
-exports.getItemByIDAction = getItemByIDAction;
-exports.getReplysByFbIDAction = getReplysByFbIDAction;
-exports.getCartItemsAction = getCartItemsAction;
-exports.getCategoriesAction = getCategoriesAction;
-exports.searchItemsInCategoryAction = searchItemsInCategoryAction;
-exports.deleteCartItemAction = deleteCartItemAction;
-exports.addNewItemAction = addNewItemAction;
