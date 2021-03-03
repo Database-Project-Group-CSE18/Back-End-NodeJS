@@ -271,7 +271,7 @@ const generateOrderReport = (start_date,end_date,user_id) =>{
 //generate quarter report details     check this out
 
 const generateQuarterReport = (start_date,end_date)=>{
-  const query = "SELECT `Item`.`item_id`as item_id, `Item`.`item_name` as item_name, sum(`Order`.`order_total`) as sales from `Order`,`OrderItem`,Variant, Item where `OrderItem`.variant_id = Variant.variant_id and Variant.item_id = Item.item_id and `Order`.`order_id` = `OrderItem`.`order_id` and `Order`.`ordered_date` BETWEEN ? AND ?  group by `Item`.`item_id`"
+  const query = "SELECT `Item`.`item_id`as item_id, sum(`Order`.`order_total`) as sales from `Order`,`OrderItem`,Variant, Item where `OrderItem`.variant_id = Variant.variant_id and Variant.item_id = Item.item_id and `Order`.`order_id` = `OrderItem`.`order_id` and `Order`.`ordered_date` BETWEEN ? AND ?  group by `Item`.`item_id`"
   return new Promise((resolve, reject) => {
     db.query(query,[start_date,end_date],
       (error, results, fields) => {
@@ -284,6 +284,19 @@ const generateQuarterReport = (start_date,end_date)=>{
       }
     )})}
 
+const getAllItems = ()=>{
+  const query = "SELECT `Item`.`item_id` as item_id, `Item`.`item_name` as item_name from `Item`"
+  return new Promise((resolve, reject) => {
+    db.query(query,
+      (error, results, fields) => {
+        if (!error) {
+          resolve(results);
+        } else {
+          reject(error);
+        }
+      }
+    )})
+}
 
 
 
@@ -307,5 +320,6 @@ module.exports = {
   generateQuarterReport,
   markasShipped,
   getOrderDetails,
-  getOrderItemsDetails
+  getOrderItemsDetails,
+  getAllItems
 }

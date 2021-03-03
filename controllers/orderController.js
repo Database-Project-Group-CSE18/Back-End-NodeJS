@@ -207,6 +207,7 @@ const generateQuaterReportAction = (req,res)=>{
   let second_quart_det;
   let third_quart_det;
   let fourth_quart_det;
+  let all_items;
 
   OrderModel.generateQuarterReport(firstQuarterStartDate,firstQuarterEndDate)
   .then((result) => {
@@ -220,14 +221,19 @@ const generateQuaterReportAction = (req,res)=>{
             OrderModel.generateQuarterReport(fourthQuarterStartDate,fourthQuarterEndDate)
             .then((result)=>{
               fourth_quart_det = result
-              res.type("application/json");
-              res.json({
-                first_quart_det: first_quart_det,
-                second_quart_det:second_quart_det,
-                third_quart_det:third_quart_det,
-                fourth_quart_det:fourth_quart_det
-                });
-              res.status(200);
+              OrderModel.getAllItems().
+              then((result)=>{
+                all_items = result
+                res.type("application/json");
+                res.json({
+                  first_quart_det: first_quart_det,
+                  second_quart_det:second_quart_det,
+                  third_quart_det:third_quart_det,
+                  fourth_quart_det:fourth_quart_det,
+                  all_items:all_items
+                  });
+                res.status(200);
+              })      
             })
         })
         .catch((err)=>{
