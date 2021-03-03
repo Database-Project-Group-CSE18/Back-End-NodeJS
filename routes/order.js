@@ -38,6 +38,9 @@ orderRouter.route("/delivered")
 orderRouter.route("/markasshipped")
   .post(orderController.MarkAsShipped);
 
+  orderRouter.route("/marknotasshipped")
+  .post(orderController.MarkNotAsShipped);
+
 module.exports = orderRouter;
 
 

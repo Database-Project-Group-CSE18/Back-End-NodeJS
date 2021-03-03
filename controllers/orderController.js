@@ -108,16 +108,6 @@ const getReturnsAction = (req, res) => {
 
 const Feedback = require('../models/orderModel');
 
-//var loggedUser = 1;
-
-let date_ob = new Date();
-// current date
-// adjust 0 before single digit date
-let date = ("0" + date_ob.getDate()).slice(-2);
-// current month
-let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
-// current year
-let year = date_ob.getFullYear();
 
 //should get feedback from request
 const insertFeedbackAction = (req,res)=>{
@@ -134,23 +124,9 @@ const insertFeedbackAction = (req,res)=>{
         res.json({ success: false, message: err });
       });      
 }
-let dateTime = year + "-" + month + "-" + date + " ";
 
-//should get feedback from request
-const insertFeedbackAction = (req, res) => {
-  //console.log(req.body)
-  Feedback.addFeedback(req.body, loggedUser)
-    .then((success) => {
-      res.statusCode = 200;
-      res.set("Content-Type", "application/json");
-      res.json({ success: true, insertId: success.insertId });
-    })
-    .catch((err) => {
-      res.statusCode = 500;
-      res.set("Content-Type", "application/json");
-      res.json({ success: false, message: err });
-    });
-};
+
+
 
 const placeOrderAction = (req, res) => {
   console.log(req.body);
@@ -209,10 +185,23 @@ const MarkAsShipped = (req, res) => {
       console.log(err)
     });
 };
+const MarkNotAsShipped = (req, res) => {
+  console.log(req.body.order_id)
+  OrderModel.marknotasShipped(req.body.order_id,"")
+    .then((orders) => {
+      res.statusCode = 200;
+      res.set("Content-Type", "application/json");
+      res.json({ success: true, orders: orders });
+    })
+    .catch((err) => {
+      res.statusCode = 500;
+      res.set("Content-Type", "application/json");
+      res.json({ success: false, message: err });
+      console.log(err)
+    });
+};
 
-exports.insertFeedbackAction = insertFeedbackAction;
-exports.placeOrderAction = placeOrderAction;
-exports.getOrderDetailsAction = getOrderDetailsAction;
+
 module.exports = {
   getAllOrdersAction,
   searchOrdersInOrderlist,
@@ -223,5 +212,9 @@ module.exports = {
   getCancellationsAction,
   insertFeedbackAction,
   placeOrderAction,
-  MarkAsShipped
+  MarkAsShipped,
+  insertFeedbackAction,
+  placeOrderAction,
+  getOrderDetailsAction,
+  MarkNotAsShipped
 }
