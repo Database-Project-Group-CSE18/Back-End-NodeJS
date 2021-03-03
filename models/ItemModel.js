@@ -152,11 +152,12 @@ const getAllCategories= () =>{
 };
 
 const searchItemsInCategory = (category, item_name) => {
-  
-  var query = `SELECT * FROM Display_item WHERE category = ? AND item_name LIKE ?`;
+  "SELECT `item_id`, `num_of_orders`, `item_name`, `status`, `category_name`, `description`, AVG(`rate`) AS `rating`, COUNT(`rate`) AS `reviews` , `price`, `image` FROM `Item` NATURAL LEFT JOIN `Feedback` WHERE `category` = ? AND `item_name` LIKE ? GROUP BY `item_name`"
+
+  var query = "SELECT `item_id`, `num_of_orders`, `item_name`, `status`, `category_name`, `description`, AVG(`rate`) AS `rating`, COUNT(`rate`) AS `reviews` , `price`, `image` FROM `Item` NATURAL LEFT JOIN `Feedback` WHERE `category` = ? AND `item_name` LIKE ? GROUP BY `item_name`";
   var values = [category, '%'+item_name+'%']
   if(category === 'All Categories'){
-    var query = `SELECT * FROM Display_item WHERE item_name LIKE ?`;
+    var query = "SELECT `item_id`, `num_of_orders`, `item_name`, `status`, `category_name`, `description`, AVG(`rate`) AS `rating`, COUNT(`rate`) AS `reviews` , `price`, `image` FROM `Item` NATURAL LEFT JOIN `Feedback` WHERE `item_name` LIKE ? GROUP BY `item_name`";
     var values = ['%'+item_name+'%']
   }
 
@@ -212,4 +213,55 @@ const addToCart = (data) => {
   });
 }
 
-exports.addToCart =addToCart;
+
+const addVariants = (data) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      "INSERT INTO `Variant`(`variant_name`, `price`, `color`, `size`, `specific_detail`, `quantity`, `image`, `item_id` ) VALUES ?",
+      [data],
+      (error, results, fields) => {
+        if (!error) {
+          resolve(results);
+        } else {
+          reject(error);
+        }
+      }
+    );
+  });
+}
+
+const getLastInsertId = () => {
+  return new Promise((resolve, reject)=>{
+    db.query(
+      "SELECT LAST_INSERT_ID()",
+      (error, results, fields) => {
+        if (!error) {
+          resolve(results);
+        } else {
+          reject(error);
+        }
+      }
+    );
+  })
+}
+
+const addItem = (data) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      "INSERT INTO `Item`(`category_name`, `description`, `image`, `item_name`, `price`, `status`) VALUES (?,?,?,?,?,?)",
+      [data.catagory, data.description, data.image, data.item_name, data.price, data.status],
+      (error, results, fields) => {
+        if (!error) {
+          resolve(results);
+        } else {
+          reject(error);
+        }
+      }
+    );
+  });
+}
+
+exports.getLastInsertId = getLastInsertId;
+exports.addItem = addItem;
+exports.addToCart = addToCart;
+exports.addVariants = addVariants;
