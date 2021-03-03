@@ -126,7 +126,6 @@ const insertFeedbackAction = (req,res)=>{
 }
 
 
-
 const placeOrderAction = (req, res) => {
   console.log(req.body);
   Feedback.placeOrder(req.body, req.session.user.user_id, dateTime)
@@ -185,7 +184,79 @@ const MarkAsShipped = (req, res) => {
     });
 };
 
+
+//check this out
+
+const generateQuaterReportAction = (req,res)=>{
+  let year = req.body.year
+  let firstQuarterStartDate = year+'/01/01'
+  let firstQuarterEndDate = year + '/03/31'
+
+  let secondQaurterStartDate = year+ '/04/01'
+  let secondQaurterEndDate = year+'/06/30'
+
+  let thirdQuarterStartDate = year+'/07/01'
+  let thirdQuarterEndDate = year+'/09/30'
+
+  let fourthQuarterStartDate = year+'/10/01'
+  let fourthQuarterEndDate = year+'12/31'
+   
+  let first_quart_det;
+  let second_quart_det;
+  let third_quart_det;
+  let fourth_quart_det;
+
+  OrderModel.generateQuarterReport(firstQuarterStartDate,firstQuarterEndDate)
+  .then((result) => {
+    first_quart_det = result
+    OrderModel.generateQuarterReport(secondQaurterStartDate,secondQaurterEndDate)
+    .then((result)=>{
+        second_quart_det = result
+        OrderModel.generateQuarterReport(thirdQuarterStartDate,thirdQuarterEndDate) 
+        .then((result)=>{
+            third_quart_det = result
+            OrderModel.generateQuarterReport(fourthQuarterStartDate,fourthQuarterEndDate)
+            .then((result)=>{
+              fourth_quart_det = result
+              res.type("application/json");
+              res.json({
+                first_quart_det: first_quart_det,
+                second_quart_det:second_quart_det,
+                third_quart_det:third_quart_det,
+                fourth_quart_det:fourth_quart_det
+                });
+              res.status(200);
+            })
+        })
+        .catch((err)=>{
+          res.json({
+            message: err,
+          });
+          res.status(400);
+        }) 
+    })
+    .catch((err)=>{
+      res.json({
+        message: err,
+      });
+      res.status(400);
+    })
+  })
+  .catch((err) => {
+    res.json({
+      message: err,
+    });
+    res.status(400);
+  });
+}
+
+
+
+
 module.exports = {
+  insertFeedbackAction,
+  placeOrderAction,
+  getOrderDetailsAction,
   getAllOrdersAction,
   getOrderDetailsAction,
   searchOrdersInOrderlist,
@@ -196,5 +267,6 @@ module.exports = {
   getCancellationsAction,
   insertFeedbackAction,
   placeOrderAction,
-  MarkAsShipped
+  MarkAsShipped,
+  generateQuaterReportAction
 }

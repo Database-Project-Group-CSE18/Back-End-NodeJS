@@ -28,6 +28,9 @@ itemRouter.route("/cart")
 itemRouter.route("/cart/:id")
   .delete(itemController.deleteCartItemAction)
 
+itemRouter.route("/newitem")
+  .post(itemController.addNewItemAction)
+
 
 module.exports = itemRouter;
 
