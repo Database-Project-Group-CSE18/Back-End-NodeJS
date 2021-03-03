@@ -175,11 +175,27 @@ const changePassword = (req, res) => {
     });
 };
 
-module.exports = {
-  getOverviewAction,
-  getProductStatisticsAction,
-  getCategoryStatisticsAction,
-  changePassword,
-  insertsellerdata,
-  getsellerdata,
-};
+  const ChartForSpecificProduct = (req,res)=>{    
+    Seller.chartforspecificproduct(req.body.item_name,req.body.year)
+    .then((success) => {
+            res.statusCode = 200;
+            res.set("Content-Type", "application/json");
+            res.json({ success: true });
+          })
+          .catch((err) => {
+            res.statusCode = 500;
+            res.set("Content-Type", "application/json");
+            console.log("err_msg",err)
+            res.json({ success: false, message: err.message });
+          });
+  }
+
+  module.exports = {
+    getOverviewAction,
+    getProductStatisticsAction,
+    getCategoryStatisticsAction,
+    changePassword,
+    insertsellerdata,
+    getsellerdata,
+    ChartForSpecificProduct
+  };

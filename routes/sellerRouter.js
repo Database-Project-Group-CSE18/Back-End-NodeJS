@@ -21,6 +21,7 @@ router.get("/categorystatistics", SellerController.getCategoryStatisticsAction);
  ################################################################# */
  
  router.route("/changeSellerDetails")
+router.route("/changeSellerDetails")
     .put(SellerController.insertsellerdata)
     .get(SellerController.getsellerdata)
 
@@ -30,5 +31,9 @@ router.get("/categorystatistics", SellerController.getCategoryStatisticsAction);
  
  router.route("/changeSellerPassword")
     .put(SellerController.changePassword)
+
+   
+router.route("/chartforspecificproduct")
+.get(SellerController.ChartForSpecificProduct) 
 
 module.exports = router;
