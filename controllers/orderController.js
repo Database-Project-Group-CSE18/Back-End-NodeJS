@@ -1,5 +1,16 @@
 const OrderModel = require("../models/OrderModel");
 
+let date_ob = new Date();
+// current date
+// adjust 0 before single digit date
+let date = ("0" + date_ob.getDate()).slice(-2);
+// current month
+let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+// current year
+let year = date_ob.getFullYear();
+
+let dateTime = year + "-" + month + "-" + date + " ";
+
 const getAllOrdersAction = (req, res) => {
   OrderModel.getAllSellerOrders()
     .then((orders) => {
@@ -16,7 +27,7 @@ const getAllOrdersAction = (req, res) => {
 
 
 const searchOrdersInOrderlist = (req, res) => {
-  OrderModel.searchOrders(req.body.item_name)
+  OrderModel.searchOrders(req.body.order_id)
     .then((orders) => {
       res.statusCode = 200;
       res.set("Content-Type", "application/json");
@@ -36,6 +47,7 @@ const getAwaitingShipmentsAction = (req, res) => {
       res.json({ success: true, orders: orders });
     })
     .catch((err) => {
+      console.log(err);
       res.statusCode = 500;
       res.set("Content-Type", "application/json");
       res.json({ success: false, message: err });
@@ -168,6 +180,25 @@ const getOrderDetailsAction = (req, res) => {
     });
 };
 
+const MarkAsShipped = (req, res) => {
+  console.log(req.body.order_id)
+  OrderModel.markasShipped(req.body.order_id,dateTime)
+    .then((orders) => {
+      res.statusCode = 200;
+      res.set("Content-Type", "application/json");
+      res.json({ success: true, orders: orders });
+    })
+    .catch((err) => {
+      res.statusCode = 500;
+      res.set("Content-Type", "application/json");
+      res.json({ success: false, message: err });
+      console.log(err)
+    });
+};
+
+exports.insertFeedbackAction = insertFeedbackAction;
+exports.placeOrderAction = placeOrderAction;
+exports.getOrderDetailsAction = getOrderDetailsAction;
 module.exports = {
   getAllOrdersAction,
   getOrderDetailsAction,
@@ -179,5 +210,5 @@ module.exports = {
   getCancellationsAction,
   insertFeedbackAction,
   placeOrderAction,
-  insertFeedbackAction
+  MarkAsShipped
 }
