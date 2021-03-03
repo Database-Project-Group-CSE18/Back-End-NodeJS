@@ -1,9 +1,12 @@
-var express = require('express');
+var express = require("express");
+const bodyParser = require("body-parser");
+const SellerController = require("../controllers/SellerController");
 var router = express.Router();
+const verifyJWT = require("../middleware/Authentication")
 
-/* GET users listing. */
-// router.get('/', function(req, res, next) {
-//   res.send('respond with a resource');
-// });
+router.use(bodyParser.json());
+
+router.post("/overview",verifyJWT, SellerController.getOverviewAction);
+
 
 module.exports = router;
