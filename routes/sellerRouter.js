@@ -30,11 +30,8 @@ router.route("/changeSellerDetails")
             Router for put new password to the DB
  ################################################################# */
  
-<<<<<<< HEAD
  router.route("/changeSellerPassword")
-=======
 router.route("/changeSellerPassword")
->>>>>>> master
     .put(SellerController.changePassword)
 
 module.exports = router;
