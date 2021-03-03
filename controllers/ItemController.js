@@ -79,7 +79,7 @@ const getReplysByFbIDAction = (req, res) => {
 };
 
 const getCartItemsAction = (req, res) => {
-  console.log(req.session)
+  console.log(req.session);
   ItemModel.getCartItems(req.session.user.user_id)
     .then((cart) => {
       res.statusCode = 200;
@@ -93,26 +93,25 @@ const getCartItemsAction = (req, res) => {
     });
 };
 
-const deleteCartItemAction  = (req,res)=>{
-  ItemModel.deleteCartItem(req.session.user.user_id,req.params.id)
-  .then((success)=>{
+const deleteCartItemAction = (req, res) => {
+  ItemModel.deleteCartItem(req.session.user.user_id, req.params.id)
+    .then((success) => {
       res.statusCode = 200;
       res.set("Content-Type", "application/json");
-      res.json({ success: true});
-  })
-  .catch((err) => {
+      res.json({ success: true });
+    })
+    .catch((err) => {
       res.statusCode = 500;
       res.set("Content-Type", "application/json");
       res.json({ success: false, message: err });
-    }); 
-}
-
+    });
+};
 
 const getCategoriesAction = (req, res) => {
   ItemModel.getAllCategories()
     .then((categories) => {
-      categoriesArr = []
-      categories.forEach(element => {
+      categoriesArr = [];
+      categories.forEach((element) => {
         categoriesArr.push(element.category_name);
       });
       res.statusCode = 200;
@@ -126,9 +125,8 @@ const getCategoriesAction = (req, res) => {
     });
 };
 
-
 const searchItemsInCategoryAction = (req, res) => {
-  ItemModel.searchItemsInCategory(req.body.category ,req.body.item_name)
+  ItemModel.searchItemsInCategory(req.body.category, req.body.item_name)
     .then((cart) => {
       res.statusCode = 200;
       res.set("Content-Type", "application/json");
@@ -140,16 +138,6 @@ const searchItemsInCategoryAction = (req, res) => {
       res.json({ success: false, message: err });
     });
 };
-
-exports.getAllItemsAction = getAllItemsAction;
-exports.getItemsByCategoryAction = getItemsByCategoryAction;
-exports.getItemByIDAction = getItemByIDAction;
-exports.getReplysByFbIDAction = getReplysByFbIDAction;
-exports.getCartItemsAction = getCartItemsAction;
-exports.getCategoriesAction = getCategoriesAction;
-exports.searchItemsInCategoryAction = searchItemsInCategoryAction;
-exports.deleteCartItemAction = deleteCartItemAction;
-
 
 const addToCartAction = (req, res) => {
   console.log(req.body);
@@ -166,6 +154,52 @@ const addToCartAction = (req, res) => {
     });
 };
 
+const addNewItemAction = (req, res) => {
+  ItemModel.addItem(req.body)
+    .then((response) => {
+      ItemModel.getLastInsertId()
+        .then((response) => {
+          var last_insert_id = Object.values(response[0])[0];
+          var variantsArr = req.body.variants.map((variant) => {
+            var vari = Object.values(variant);
+            vari.push(last_insert_id);
+            return vari;
+          });
+          ItemModel.addVariants(variantsArr)
+            .then((response) => {
+              res.statusCode = 200;
+              res.set("Content-Type", "application/json");
+              res.json({ success: true });
+            })
+            .catch((err) => {
+              console.log(err)
+              res.statusCode = 500;
+              res.set("Content-Type", "application/json");
+              res.json({ success: false, message: err });
+            });
+        })
+        .catch((err) => {
+          console.log(err)
+          res.statusCode = 500;
+          res.set("Content-Type", "application/json");
+          res.json({ success: false, message: err });
+        });
+    })
+    .catch((err) => {
+      console.log(err)
+      res.statusCode = 500;
+      res.set("Content-Type", "application/json");
+      res.json({ success: false, message: err });
+    });
+};
+
 exports.addToCartAction = addToCartAction;
-
-
+exports.getAllItemsAction = getAllItemsAction;
+exports.getItemsByCategoryAction = getItemsByCategoryAction;
+exports.getItemByIDAction = getItemByIDAction;
+exports.getReplysByFbIDAction = getReplysByFbIDAction;
+exports.getCartItemsAction = getCartItemsAction;
+exports.getCategoriesAction = getCategoriesAction;
+exports.searchItemsInCategoryAction = searchItemsInCategoryAction;
+exports.deleteCartItemAction = deleteCartItemAction;
+exports.addNewItemAction = addNewItemAction;
