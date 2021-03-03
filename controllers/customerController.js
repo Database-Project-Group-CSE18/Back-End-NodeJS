@@ -286,8 +286,8 @@ const getUserDetails = (req, res) => {
     .then((user) => {
       Customer.getOrderNumbers(req.session.user.user_id)
         .then((det) => {
-          console.log("det",det)
-          console.log(det, user);
+          // console.log("det",det)
+          // console.log(det, user);
           res.statusCode = 200;
           res.set("Content-Type", "application/json");
           res.json({ success: true, user: user, det: det });
@@ -372,6 +372,7 @@ const getAllOrdersAction = (req,res) =>{
 const getOrderStatsAction = (req,res)=>{
   Order.getOrderStats(req.session.user.user_id)
   .then((stats)=>{
+    console.log("stats",stats)
     res.statusCode = 200;
     res.set("Content-Type", "application/json");
     res.json({ success: true, stats:stats});

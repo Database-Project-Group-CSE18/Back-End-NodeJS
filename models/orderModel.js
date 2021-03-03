@@ -56,12 +56,12 @@ const addFeedback = (feedback,loggedUser)=>{
 
 const getOrderStats = (loggedUser)=>{
 
-  const query = "select `order_status`,count(order_id) as Count from `Order` where customer_id = 1 group by `order_status`";
+  const query = "select `order_status`,count(order_id) as Count from `Order` where customer_id = ? group by `order_status`";
   return new Promise((resolve, reject) => {
     db.query(query, [loggedUser],
     (error, results) => {
       if (!error) {
-        console.log("stats",results);
+        // console.log("stats model",results);
         resolve(results);
       } else {
         reject(error);
