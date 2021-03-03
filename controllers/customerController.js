@@ -251,7 +251,7 @@ const insertBankCardsAction = (req, res) => {
     .then((success) => {
       res.statusCode = 200;
       res.set("Content-Type", "application/json");
-      res.json({ success: true });
+      res.json({ success: true , insertId: success.insertId});
     })
     .catch((err) => {
       res.statusCode = 500;
@@ -390,12 +390,33 @@ const getOrderStatsAction = (req,res)=>{
  ################################################################# */
 
 const updateOrderStatusAction = (req,res) =>{
-  // console.log(req.body.Order_ID, req.body.Order_status)
+  // console.log("update status", req.body.Order_status)
   Order.updateOrderStatus(req.body.Order_ID, req.body.Order_status)
   .then((stats)=>{
     res.statusCode = 200;
     res.set("Content-Type", "application/json");
     res.json({ success: true});
+})
+.catch((err) => {
+    res.statusCode = 500;
+    res.set("Content-Type", "application/json");
+    res.json({ success: false, message: err });
+  }); 
+}
+
+
+
+/**################################################################
+                          generate order report
+ ################################################################# */
+
+const generateOrderReportAction = (req,res)=>{
+  // console.log("req det",req.body.start_date,req.body.end_date,req.session.user.user_id)
+  Order.generateOrderReport(req.body.start_date,req.body.end_date,req.session.user.user_id)
+  .then((stats)=>{
+    res.statusCode = 200;
+    res.set("Content-Type", "application/json");
+    res.json({ success: true, stats:stats});  //check stats out
 })
 .catch((err) => {
     res.statusCode = 500;
@@ -421,5 +442,6 @@ module.exports = {
   updatePasswordNew,
   getOrderStatsAction,
   getAllOrdersAction,
-  updateOrderStatusAction
+  updateOrderStatusAction,
+  generateOrderReportAction
 };

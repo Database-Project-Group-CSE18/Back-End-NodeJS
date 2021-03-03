@@ -39,6 +39,10 @@ router.delete('/bankCards',customerController.deleteBankCardAction)
 router.get("/allorders",customerController.getAllOrdersAction)
 router.get("/allorders/stats",customerController.getOrderStatsAction)
 router.put("/allorders",customerController.updateOrderStatusAction)
-
+router.post("/generatereport",customerController.generateOrderReportAction)
 
 module.exports = router;
+
+
+
+
