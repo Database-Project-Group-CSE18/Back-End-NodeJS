@@ -40,6 +40,8 @@ orderRouter.route("/markasshipped")
 
 orderRouter.post("/generatequaterreport",orderController.generateQuaterReportAction);
 
+orderRouter.post("/generatesalesrevenuereport",orderController.genarateSalesRevenueReportAction);
+
 
 module.exports = orderRouter;
 
