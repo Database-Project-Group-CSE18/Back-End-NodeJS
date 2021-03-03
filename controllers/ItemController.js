@@ -141,16 +141,6 @@ const searchItemsInCategoryAction = (req, res) => {
     });
 };
 
-exports.getAllItemsAction = getAllItemsAction;
-exports.getItemsByCategoryAction = getItemsByCategoryAction;
-exports.getItemByIDAction = getItemByIDAction;
-exports.getReplysByFbIDAction = getReplysByFbIDAction;
-exports.getCartItemsAction = getCartItemsAction;
-exports.getCategoriesAction = getCategoriesAction;
-exports.searchItemsInCategoryAction = searchItemsInCategoryAction;
-exports.deleteCartItemAction = deleteCartItemAction;
-
-
 const addToCartAction = (req, res) => {
   console.log(req.body);
   ItemModel.addToCart(req.body)
@@ -166,6 +156,14 @@ const addToCartAction = (req, res) => {
     });
 };
 
+exports.getAllItemsAction = getAllItemsAction;
+exports.getItemsByCategoryAction = getItemsByCategoryAction;
+exports.getItemByIDAction = getItemByIDAction;
+exports.getReplysByFbIDAction = getReplysByFbIDAction;
+exports.getCartItemsAction = getCartItemsAction;
+exports.getCategoriesAction = getCategoriesAction;
+exports.searchItemsInCategoryAction = searchItemsInCategoryAction;
+exports.deleteCartItemAction = deleteCartItemAction;
 exports.addToCartAction = addToCartAction;
 
 

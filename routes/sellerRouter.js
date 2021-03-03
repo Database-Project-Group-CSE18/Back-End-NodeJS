@@ -18,15 +18,15 @@ router.post("/overview",verifyJWT, SellerController.getOverviewAction);
             Routes for get/put seller details to the DB
  ################################################################# */
  
-sellerRouter.route("/changeSellerDetails")
-    .put(sellerController.insertsellerdata)
-    .get(sellerController.getsellerdata)
+ router.route("/changeSellerDetails")
+    .put(SellerController.insertsellerdata)
+    .get(SellerController.getsellerdata)
 
 /**################################################################
             Router for put new password to the DB
  ################################################################# */
  
-sellerRouter.route("/changeSellerPassword")
-    .put(sellerController.changePassword)
+ router.route("/changeSellerPassword")
+    .put(SellerController.changePassword)
 
 module.exports = router;
