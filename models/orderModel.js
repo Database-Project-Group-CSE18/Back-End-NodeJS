@@ -9,7 +9,6 @@ const db = require('../config/database');
 
 
 const updateOrderStatus = (order_id,new_status)=>{
-
     return new Promise((resolve, reject) => {
         db.query("UPDATE `Order` set order_status = ? where order_id = ?", [new_status,order_id],
         (error, results, fields) => {
@@ -24,12 +23,11 @@ const updateOrderStatus = (order_id,new_status)=>{
 }
 const getAllOrders = (loggedUser)=>{
   return new Promise((resolve, reject) => {
-    const query = "select `Order`.`order_id`,`Order`.`order_status`,`Order`.`tracking_number` as Track,`ordered_date`,JSON_ARRAYAGG(item_name) AS Name,JSON_ARRAYAGG(`Variant`.image) AS Image,JSON_ARRAYAGG(`Variant`.Price) AS Price from `Order`,`OrderItem`,Variant, Item where `OrderItem`.variant_id = Variant.variant_id and Variant.item_id = Item.item_id and `Order`.`order_id` = `OrderItem`.`order_id`  and `Order`.customer_id = ? group by `Order`.`order_id`;";     //JSON_ARRAYAGG(OrderItem_ID) AS Item_ID ,
+    const query = "select `Order`.`order_id`,`Order`.`order_status`,`Order`.`tracking_number` as Track,`ordered_date`, JSON_ARRAYAGG(`Item`.`item_id`) AS Item_ID ,JSON_ARRAYAGG(item_name) AS Name,JSON_ARRAYAGG(`Variant`.image) AS Image,JSON_ARRAYAGG(`Variant`.Price) AS Price from `Order`,`OrderItem`,Variant, Item where `OrderItem`.variant_id = Variant.variant_id and Variant.item_id = Item.item_id and `Order`.`order_id` = `OrderItem`.`order_id`  and `Order`.customer_id = ? group by `Order`.`order_id`;";     //JSON_ARRAYAGG(OrderItem_ID) AS Item_ID ,
     db.query(query, [loggedUser],
     (error, results, fields) => {
       if (!error) {
         resolve(results);
-        // console.log(results);
       } else {
         reject(error);
         console.log("orders query error")
@@ -230,13 +228,10 @@ const getReceived = () => {
   });
 };
 
-
 const markasShipped = (order_id,shipped_date) => {
   
   var query ="UPDATE `order` set `order_status`='shipped', `shipped_date`=? Where `order_id`=?" ;
   var values = [shipped_date,order_id]
- 
-
   return new Promise((resolve, reject) => {
     db.query(
       query,
@@ -253,6 +248,47 @@ const markasShipped = (order_id,shipped_date) => {
 }
 
 
+
+// generate customer report details
+
+const generateOrderReport = (start_date,end_date,user_id) =>{
+  console.log("sdsd",start_date,end_date,user_id)
+  return new Promise((resolve, reject) => {
+    db.query(
+      "SELECT `Order`.`order_id`as order_id, `Order`.`ordered_date` as ordered_date, `Order`.`order_total` as price, count(`OrderItem`.`variant_id`) as nb_of_items, JSON_ARRAYAGG(`Item`.`item_name`) as description from `Order`,`OrderItem`,Variant, Item where `OrderItem`.variant_id = Variant.variant_id and Variant.item_id = Item.item_id and `Order`.`order_id` = `OrderItem`.`order_id` and ordered_date BETWEEN ? AND ?  and `Order`.customer_id = ? group by `Order`.`order_id` order by `Order`.`ordered_date`",[start_date,end_date,user_id],
+      (error, results, fields) => {
+        if (!error) {
+          resolve(results);
+          console.log("query output",results);
+        } else {
+          reject(error);
+        }
+      }
+    );
+  });
+}
+
+//generate quarter report details     check this out
+
+const generateQuarterReport = (start_date,end_date)=>{
+  const query = "SELECT `Item`.`item_id`as item_id, `Item`.`item_name` as item_name, sum(`Order`.`order_total`) as sales from `Order`,`OrderItem`,Variant, Item where `OrderItem`.variant_id = Variant.variant_id and Variant.item_id = Item.item_id and `Order`.`order_id` = `OrderItem`.`order_id` and `Order`.`ordered_date` BETWEEN ? AND ?  group by `Item`.`item_id`"
+  return new Promise((resolve, reject) => {
+    db.query(query,[start_date,end_date],
+      (error, results, fields) => {
+        if (!error) {
+          resolve(results);
+          // console.log("query output",results);
+        } else {
+          reject(error);
+        }
+      }
+    )})}
+
+
+
+
+
+
 module.exports = {
   updateOrderStatus,
   getAllOrders,
@@ -267,5 +303,9 @@ module.exports = {
   getOrderStats,
   getAllSellerOrders,
   placeOrder,
-  markasShipped
+  generateOrderReport,
+  generateQuarterReport,
+  markasShipped,
+  getOrderDetails,
+  getOrderItemsDetails
 }
