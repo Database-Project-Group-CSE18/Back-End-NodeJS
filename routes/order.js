@@ -3,7 +3,6 @@ const orderRouter = express.Router();
 const orderController = require('../controllers/orderController');
 const { deleteBankCard } = require('../models/userModel');
 // const { deleteBankCard } = require('../model/customerModel');
-const { deleteBankCard } = require('../models/userModel');
 
 /*Feedback routes*/
 
@@ -29,9 +28,9 @@ orderRouter.route("/returns")
 orderRouter.route("/cancellations")
   .get(orderController.getCancellationsAction);
 
-/* GET items listing. */
-orderRouter.route('/orderdetails/:order_id').
-    get(orderController.getOrderDetailsAction);
+// /* GET items listing. */
+orderRouter.route('/orderdetails/:order_id')
+   .get(orderController.getOrderDetailsAction);
 
 orderRouter.route("/delivered")
   .get(orderController.getReceivedAction);

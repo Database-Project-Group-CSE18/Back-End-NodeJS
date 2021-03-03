@@ -124,21 +124,7 @@ const insertFeedbackAction = (req,res)=>{
 }
 let dateTime = year + "-" + month + "-" + date + " ";
 
-//should get feedback from request
-const insertFeedbackAction = (req, res) => {
-  //console.log(req.body)
-  Feedback.addFeedback(req.body, loggedUser)
-    .then((success) => {
-      res.statusCode = 200;
-      res.set("Content-Type", "application/json");
-      res.json({ success: true, insertId: success.insertId });
-    })
-    .catch((err) => {
-      res.statusCode = 500;
-      res.set("Content-Type", "application/json");
-      res.json({ success: false, message: err });
-    });
-};
+
 
 const placeOrderAction = (req, res) => {
   console.log(req.body);
@@ -182,11 +168,9 @@ const getOrderDetailsAction = (req, res) => {
     });
 };
 
-exports.insertFeedbackAction = insertFeedbackAction;
-exports.placeOrderAction = placeOrderAction;
-exports.getOrderDetailsAction = getOrderDetailsAction;
 module.exports = {
   getAllOrdersAction,
+  getOrderDetailsAction,
   searchOrdersInOrderlist,
   getAwaitingShipmentsAction,
   getAwaitingDeliveriesAction,
@@ -194,5 +178,6 @@ module.exports = {
   getReturnsAction,
   getCancellationsAction,
   insertFeedbackAction,
-  placeOrderAction
+  placeOrderAction,
+  insertFeedbackAction
 }
