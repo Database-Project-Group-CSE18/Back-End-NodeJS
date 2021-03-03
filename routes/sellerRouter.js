@@ -1,6 +1,17 @@
-var express = require('express');
-var sellerRouter = express.Router();
-const sellerController = require('../controllers/sellerController');
+var express = require("express");
+const bodyParser = require("body-parser");
+const SellerController = require("../controllers/SellerController");
+var router = express.Router();
+const verifyJWT = require("../middleware/Authentication")
+
+router.use(bodyParser.json());
+
+
+/**################################################################
+                          Customer Model
+ ################################################################# */
+
+router.post("/overview",verifyJWT, SellerController.getOverviewAction);
 
 
 /**################################################################
@@ -18,4 +29,4 @@ sellerRouter.route("/changeSellerDetails")
 sellerRouter.route("/changeSellerPassword")
     .put(sellerController.changePassword)
 
-module.exports = sellerRouter;
+module.exports = router;
