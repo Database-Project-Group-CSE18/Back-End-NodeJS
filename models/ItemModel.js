@@ -152,11 +152,12 @@ const getAllCategories= () =>{
 };
 
 const searchItemsInCategory = (category, item_name) => {
-  
-  var query = `SELECT * FROM Display_item WHERE category = ? AND item_name LIKE ?`;
+  "SELECT `item_id`, `num_of_orders`, `item_name`, `status`, `category_name`, `description`, AVG(`rate`) AS `rating`, COUNT(`rate`) AS `reviews` , `price`, `image` FROM `Item` NATURAL LEFT JOIN `Feedback` WHERE `category` = ? AND `item_name` LIKE ? GROUP BY `item_name`"
+
+  var query = "SELECT `item_id`, `num_of_orders`, `item_name`, `status`, `category_name`, `description`, AVG(`rate`) AS `rating`, COUNT(`rate`) AS `reviews` , `price`, `image` FROM `Item` NATURAL LEFT JOIN `Feedback` WHERE `category` = ? AND `item_name` LIKE ? GROUP BY `item_name`";
   var values = [category, '%'+item_name+'%']
   if(category === 'All Categories'){
-    var query = `SELECT * FROM Display_item WHERE item_name LIKE ?`;
+    var query = "SELECT `item_id`, `num_of_orders`, `item_name`, `status`, `category_name`, `description`, AVG(`rate`) AS `rating`, COUNT(`rate`) AS `reviews` , `price`, `image` FROM `Item` NATURAL LEFT JOIN `Feedback` WHERE `item_name` LIKE ? GROUP BY `item_name`";
     var values = ['%'+item_name+'%']
   }
 

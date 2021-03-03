@@ -133,6 +133,7 @@ const searchItemsInCategoryAction = (req, res) => {
       res.json({ success: true, items: cart });
     })
     .catch((err) => {
+      console.log(err)
       res.statusCode = 500;
       res.set("Content-Type", "application/json");
       res.json({ success: false, message: err });
