@@ -272,7 +272,7 @@ const generateOrderReport = (start_date, end_date, user_id) => {
 
 const generateQuarterReport = (start_date, end_date) => {
   const query =
-    "SELECT `Item`.`item_id`as item_id, sum(`Order`.`order_total`) as sales from `Order`,`OrderItem`,Variant, Item where `OrderItem`.variant_id = Variant.variant_id and Variant.item_id = Item.item_id and `Order`.`order_id` = `OrderItem`.`order_id` and `Order`.`ordered_date` BETWEEN ? AND ?  group by `Item`.`item_id`";
+    "SELECT `Item`.`item_id`as item_id, sum(`Order`.`order_total`) as sales from `Order`,`OrderItem`,Variant, Item where `OrderItem`.variant_id = Variant.variant_id and Variant.item_id = Item.item_id and `Order`.`order_id` = `OrderItem`.`order_id` and `Order`.`ordered_date` BETWEEN ? AND ?  group by `Item`.`item_id` ORDER BY `Item`.`item_id`";
   return new Promise((resolve, reject) => {
     db.query(query, [start_date, end_date], (error, results, fields) => {
       if (!error) {
