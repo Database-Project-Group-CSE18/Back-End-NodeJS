@@ -126,8 +126,6 @@ const insertFeedbackAction = (req,res)=>{
 }
 
 
-
-
 const placeOrderAction = (req, res) => {
   console.log(req.body);
   Feedback.placeOrder(req.body, req.session.user.user_id, dateTime)
@@ -254,10 +252,11 @@ const generateQuaterReportAction = (req,res)=>{
 
 
 
-exports.insertFeedbackAction = insertFeedbackAction;
-exports.placeOrderAction = placeOrderAction;
-exports.getOrderDetailsAction = getOrderDetailsAction;
+
 module.exports = {
+  insertFeedbackAction,
+  placeOrderAction,
+  getOrderDetailsAction,
   getAllOrdersAction,
   getOrderDetailsAction,
   searchOrdersInOrderlist,
