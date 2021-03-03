@@ -108,16 +108,6 @@ const getReturnsAction = (req, res) => {
 
 const Feedback = require('../models/orderModel');
 
-//var loggedUser = 1;
-
-let date_ob = new Date();
-// current date
-// adjust 0 before single digit date
-let date = ("0" + date_ob.getDate()).slice(-2);
-// current month
-let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
-// current year
-let year = date_ob.getFullYear();
 
 //should get feedback from request
 const insertFeedbackAction = (req,res)=>{
@@ -134,7 +124,7 @@ const insertFeedbackAction = (req,res)=>{
         res.json({ success: false, message: err });
       });      
 }
-let dateTime = year + "-" + month + "-" + date + " ";
+
 
 
 
@@ -196,6 +186,74 @@ const MarkAsShipped = (req, res) => {
     });
 };
 
+
+//check this out
+
+const generateQuaterReportAction = (req,res)=>{
+  let year = req.body.year
+  let firstQuarterStartDate = year+'/01/01'
+  let firstQuarterEndDate = year + '/03/31'
+
+  let secondQaurterStartDate = year+ '/04/01'
+  let secondQaurterEndDate = year+'/06/30'
+
+  let thirdQuarterStartDate = year+'/07/01'
+  let thirdQuarterEndDate = year+'/09/30'
+
+  let fourthQuarterStartDate = year+'/10/01'
+  let fourthQuarterEndDate = year+'12/31'
+   
+  let first_quart_det;
+  let second_quart_det;
+  let third_quart_det;
+  let fourth_quart_det;
+
+  OrderModel.generateQuarterReport(firstQuarterStartDate,firstQuarterEndDate)
+  .then((result) => {
+    first_quart_det = result
+    OrderModel.generateQuarterReport(secondQaurterStartDate,secondQaurterEndDate)
+    .then((result)=>{
+        second_quart_det = result
+        OrderModel.generateQuarterReport(thirdQuarterStartDate,thirdQuarterEndDate) 
+        .then((result)=>{
+            third_quart_det = result
+            OrderModel.generateQuarterReport(fourthQuarterStartDate,fourthQuarterEndDate)
+            .then((result)=>{
+              fourth_quart_det = result
+              res.type("application/json");
+              res.json({
+                first_quart_det: first_quart_det,
+                second_quart_det:second_quart_det,
+                third_quart_det:third_quart_det,
+                fourth_quart_det:fourth_quart_det
+                });
+              res.status(200);
+            })
+        })
+        .catch((err)=>{
+          res.json({
+            message: err,
+          });
+          res.status(400);
+        }) 
+    })
+    .catch((err)=>{
+      res.json({
+        message: err,
+      });
+      res.status(400);
+    })
+  })
+  .catch((err) => {
+    res.json({
+      message: err,
+    });
+    res.status(400);
+  });
+}
+
+
+
 exports.insertFeedbackAction = insertFeedbackAction;
 exports.placeOrderAction = placeOrderAction;
 exports.getOrderDetailsAction = getOrderDetailsAction;
@@ -210,5 +268,6 @@ module.exports = {
   getCancellationsAction,
   insertFeedbackAction,
   placeOrderAction,
-  MarkAsShipped
+  MarkAsShipped,
+  generateQuaterReportAction
 }

@@ -228,36 +228,6 @@ const getReceived = () => {
   });
 };
 
-
-// generate customer report details
-
-const generateOrderReport = (start_date,end_date,user_id) =>{
-  console.log("sdsd",start_date,end_date,user_id)
-  return new Promise((resolve, reject) => {
-    db.query(
-      "SELECT `Order`.`order_id`as order_id, `Order`.`ordered_date` as ordered_date, `Order`.`order_total` as price, count(`OrderItem`.`variant_id`) as nb_of_items, JSON_ARRAYAGG(`Item`.`item_name`) as description from `Order`,`OrderItem`,Variant, Item where `OrderItem`.variant_id = Variant.variant_id and Variant.item_id = Item.item_id and `Order`.`order_id` = `OrderItem`.`order_id` and ordered_date BETWEEN ? AND ?  and `Order`.customer_id = ? group by `Order`.`order_id` order by `Order`.`ordered_date`",[start_date,end_date,user_id],
-      (error, results, fields) => {
-        if (!error) {
-          resolve(results);
-          console.log("query output",results);
-        } else {
-          reject(error);
-        }
-      }
-    );
-  });
-}
-
-//generate quarter report details
-
-const generateQuarterReport = (start_date,end_date)=>{
-  const query = "SELECT `Item`.`item_id`as item_id, `Item`.`item_name` as item_name, sum(`Order`.`order_total`) as sales from `Order`,`OrderItem`,Variant, Item where `OrderItem`.variant_id = Variant.variant_id and Variant.item_id = Item.item_id and `Order`.`order_id` = `OrderItem`.`order_id` and `Order`.`ordered_date` BETWEEN ? AND ?  group by `Item`.`item_id`"
-  return new Promise((resolve, reject) => {
-    db.query(
-      query,[start_date,end_date],
-    )})}
-
-
 const markasShipped = (order_id,shipped_date) => {
   
   var query ="UPDATE `order` set `order_status`='shipped', `shipped_date`=? Where `order_id`=?" ;
@@ -278,6 +248,47 @@ const markasShipped = (order_id,shipped_date) => {
 }
 
 
+
+// generate customer report details
+
+const generateOrderReport = (start_date,end_date,user_id) =>{
+  console.log("sdsd",start_date,end_date,user_id)
+  return new Promise((resolve, reject) => {
+    db.query(
+      "SELECT `Order`.`order_id`as order_id, `Order`.`ordered_date` as ordered_date, `Order`.`order_total` as price, count(`OrderItem`.`variant_id`) as nb_of_items, JSON_ARRAYAGG(`Item`.`item_name`) as description from `Order`,`OrderItem`,Variant, Item where `OrderItem`.variant_id = Variant.variant_id and Variant.item_id = Item.item_id and `Order`.`order_id` = `OrderItem`.`order_id` and ordered_date BETWEEN ? AND ?  and `Order`.customer_id = ? group by `Order`.`order_id` order by `Order`.`ordered_date`",[start_date,end_date,user_id],
+      (error, results, fields) => {
+        if (!error) {
+          resolve(results);
+          console.log("query output",results);
+        } else {
+          reject(error);
+        }
+      }
+    );
+  });
+}
+
+//generate quarter report details     check this out
+
+const generateQuarterReport = (start_date,end_date)=>{
+  const query = "SELECT `Item`.`item_id`as item_id, `Item`.`item_name` as item_name, sum(`Order`.`order_total`) as sales from `Order`,`OrderItem`,Variant, Item where `OrderItem`.variant_id = Variant.variant_id and Variant.item_id = Item.item_id and `Order`.`order_id` = `OrderItem`.`order_id` and `Order`.`ordered_date` BETWEEN ? AND ?  group by `Item`.`item_id`"
+  return new Promise((resolve, reject) => {
+    db.query(query,[start_date,end_date],
+      (error, results, fields) => {
+        if (!error) {
+          resolve(results);
+          // console.log("query output",results);
+        } else {
+          reject(error);
+        }
+      }
+    )})}
+
+
+
+
+
+
 module.exports = {
   updateOrderStatus,
   getAllOrders,
@@ -294,5 +305,7 @@ module.exports = {
   placeOrder,
   generateOrderReport,
   generateQuarterReport,
-  markasShipped
+  markasShipped,
+  getOrderDetails,
+  getOrderItemsDetails
 }

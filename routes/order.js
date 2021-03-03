@@ -1,7 +1,7 @@
 const express = require('express');
 const orderRouter = express.Router();
 const orderController = require('../controllers/orderController');
-// const { deleteBankCard } = require('../models/userModel');
+const { deleteBankCard } = require('../models/userModel');
 // const { deleteBankCard } = require('../model/customerModel');
 
 /*Feedback routes*/
@@ -37,6 +37,9 @@ orderRouter.route("/delivered")
 
 orderRouter.route("/markasshipped")
   .post(orderController.MarkAsShipped);
+
+orderRouter.post("/generatequaterreport",orderController.generateQuaterReportAction);
+
 
 module.exports = orderRouter;
 
