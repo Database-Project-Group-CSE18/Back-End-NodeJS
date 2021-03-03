@@ -181,7 +181,7 @@ const MarkAsShipped = (req, res) => {
       res.statusCode = 500;
       res.set("Content-Type", "application/json");
       res.json({ success: false, message: err });
-      console.log(err);
+      console.log(err,"sdgdfgfgjdfnkgjdnfjldfnljg");
     });
 };
 
