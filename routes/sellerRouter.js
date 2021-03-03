@@ -13,6 +13,8 @@ router.use(bodyParser.json());
 
 router.post("/overview",verifyJWT, SellerController.getOverviewAction);
 
+router.post("/productstatistics", SellerController.getProductStatisticsAction);
+router.get("/categorystatistics", SellerController.getCategoryStatisticsAction);
 
 /**################################################################
             Routes for get/put seller details to the DB
@@ -28,7 +30,6 @@ router.route("/changeSellerDetails")
  ################################################################# */
  
  router.route("/changeSellerPassword")
-router.route("/changeSellerPassword")
     .put(SellerController.changePassword)
 
    

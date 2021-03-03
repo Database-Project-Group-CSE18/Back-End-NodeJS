@@ -1,23 +1,46 @@
 const db = require("../config/database");
 
-
 //==========================================================================================================
 //Queries for getting data from the database
 //==========================================================================================================
+function getProductReport(startDate, endDate) {
+  const sqlSelect =
+    "SELECT item_name, category_name, Item.price, num_of_orders AS orders FROM `Order` JOIN `OrderItem` ON `Order`.order_id = OrderItem.order_id JOIN `Variant` ON OrderItem.variant_id = Variant.variant_id JOIN `Item` ON Variant.item_id = Item.item_id WHERE `ordered_date` BETWEEN ? AND ? GROUP BY `item_name` ORDER BY `orders` DESC;";
+  return new Promise((resolve, reject) => {
+    db.query(sqlSelect, [startDate, endDate], (error, result) => {
+      if(!!error) {
+        console.log(error);
+        reject(error);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+}
 
-
+function getCategoryReport() {
+  const sqlSelect = "SELECT category_name, COUNT(num_of_orders) AS orders FROM `Item` GROUP BY `category_name` ORDER BY `orders` DESC;";
+  return new Promise ((resolve, reject) => {
+    db.query(sqlSelect, (error, result) => {
+      if(!!error) {
+        console.log(error);
+        reject(error);
+      } else {
+        resolve(result);
+      }
+    })
+  })
+}
 const getAllItems = () => {
   return new Promise((resolve, reject) => {
-    db.query(
-      "CALL DisplayItems()",
-      (error, results, fields) => {
-        if (!error) {
-          resolve(results);
-        } else {
-          reject(error);
-        }
+    db.query("CALL DisplayItems()", (error, results, fields) => {
+      if (!error) {
+        resolve(results);
+      } else {
+        console.log(error)
+        reject(error);
       }
-    );
+    });
   });
 };
 
@@ -53,7 +76,7 @@ const getItemByID = (id) => {
   });
 };
 
-const getVarientsByItemID = (id) =>{
+const getVarientsByItemID = (id) => {
   return new Promise((resolve, reject) => {
     db.query(
       `SELECT * FROM variant WHERE item_id = ?`,
@@ -69,7 +92,7 @@ const getVarientsByItemID = (id) =>{
   });
 };
 
-const getFeedbacksByItemID = (id) =>{
+const getFeedbacksByItemID = (id) => {
   return new Promise((resolve, reject) => {
     db.query(
       `SELECT feedback_ID, first_name, last_name, rate, comment FROM feedback JOIN user ON feedback.customer_id = user.user_id WHERE item_id = ?`,
@@ -85,7 +108,7 @@ const getFeedbacksByItemID = (id) =>{
   });
 };
 
-const getReplyByFeedbackID = (id) =>{
+const getReplyByFeedbackID = (id) => {
   return new Promise((resolve, reject) => {
     db.query(
       `SELECT * FROM reply NATURAL JOIN feedback WHERE Feedback_ID = ?`,
@@ -118,7 +141,7 @@ const getCartItems = (id) => {
       }
     );
   });
-}
+};
 
 const deleteCartItem = (user_id, variant_id) => {
   return new Promise((resolve, reject) => {
@@ -134,9 +157,9 @@ const deleteCartItem = (user_id, variant_id) => {
       }
     );
   });
-}
+};
 
-const getAllCategories= () =>{
+const getAllCategories = () => {
   return new Promise((resolve, reject) => {
     db.query(
       `SELECT DISTINCT category_name FROM item`,
@@ -152,50 +175,33 @@ const getAllCategories= () =>{
 };
 
 const searchItemsInCategory = (category, item_name) => {
-  "SELECT `item_id`, `num_of_orders`, `item_name`, `status`, `category_name`, `description`, AVG(`rate`) AS `rating`, COUNT(`rate`) AS `reviews` , `price`, `image` FROM `Item` NATURAL LEFT JOIN `Feedback` WHERE `category` = ? AND `item_name` LIKE ? GROUP BY `item_name`"
+  "SELECT `item_id`, `num_of_orders`, `item_name`, `status`, `category_name`, `description`, AVG(`rate`) AS `rating`, COUNT(`rate`) AS `reviews` , `price`, `image` FROM `Item` NATURAL LEFT JOIN `Feedback` WHERE `category` = ? AND `item_name` LIKE ? GROUP BY `item_name`";
 
-  var query = "SELECT `item_id`, `num_of_orders`, `item_name`, `status`, `category_name`, `description`, AVG(`rate`) AS `rating`, COUNT(`rate`) AS `reviews` , `price`, `image` FROM `Item` NATURAL LEFT JOIN `Feedback` WHERE `category` = ? AND `item_name` LIKE ? GROUP BY `item_name`";
-  var values = [category, '%'+item_name+'%']
-  if(category === 'All Categories'){
-    var query = "SELECT `item_id`, `num_of_orders`, `item_name`, `status`, `category_name`, `description`, AVG(`rate`) AS `rating`, COUNT(`rate`) AS `reviews` , `price`, `image` FROM `Item` NATURAL LEFT JOIN `Feedback` WHERE `item_name` LIKE ? GROUP BY `item_name`";
-    var values = ['%'+item_name+'%']
+  var query =
+    "SELECT `item_id`, `num_of_orders`, `item_name`, `status`, `category_name`, `description`, AVG(`rate`) AS `rating`, COUNT(`rate`) AS `reviews` , `price`, `image` FROM `Item` NATURAL LEFT JOIN `Feedback` WHERE `category` = ? AND `item_name` LIKE ? GROUP BY `item_name`";
+  var values = [category, "%" + item_name + "%"];
+  if (category === "All Categories") {
+    var query =
+      "SELECT `item_id`, `num_of_orders`, `item_name`, `status`, `category_name`, `description`, AVG(`rate`) AS `rating`, COUNT(`rate`) AS `reviews` , `price`, `image` FROM `Item` NATURAL LEFT JOIN `Feedback` WHERE `item_name` LIKE ? GROUP BY `item_name`";
+    var values = ["%" + item_name + "%"];
   }
 
   return new Promise((resolve, reject) => {
-    db.query(
-      query,
-      values,
-      (error, results, fields) => {
-        if (!error) {
-          resolve(results);
-        } else {
-          reject(error);
-        }
+    db.query(query, values, (error, results, fields) => {
+      if (!error) {
+        resolve(results);
+      } else {
+        reject(error);
       }
-    );
+    });
   });
-}
-
-
-
-exports.getAllItems = getAllItems;
-exports.getItemsByCategory = getItemsByCategory;
-exports.getItemByID = getItemByID;
-exports.getFeedbacksByItemID = getFeedbacksByItemID;
-exports.getVarientsByItemID = getVarientsByItemID;
-exports.getReplyByFeedbackID =getReplyByFeedbackID;
-exports.getCartItems =getCartItems;
-exports.getAllCategories =getAllCategories;
-exports.searchItemsInCategory = searchItemsInCategory;
-exports.deleteCartItem =deleteCartItem;
+};
 
 
 
 //==========================================================================================================
 //Queries for inserting data to the database
 //==========================================================================================================
-
-
 
 const addToCart = (data) => {
   return new Promise((resolve, reject) => {
@@ -211,8 +217,7 @@ const addToCart = (data) => {
       }
     );
   });
-}
-
+};
 
 const addVariants = (data) => {
   return new Promise((resolve, reject) => {
@@ -228,28 +233,32 @@ const addVariants = (data) => {
       }
     );
   });
-}
+};
 
 const getLastInsertId = () => {
-  return new Promise((resolve, reject)=>{
-    db.query(
-      "SELECT LAST_INSERT_ID()",
-      (error, results, fields) => {
-        if (!error) {
-          resolve(results);
-        } else {
-          reject(error);
-        }
+  return new Promise((resolve, reject) => {
+    db.query("SELECT LAST_INSERT_ID()", (error, results, fields) => {
+      if (!error) {
+        resolve(results);
+      } else {
+        reject(error);
       }
-    );
-  })
-}
+    });
+  });
+};
 
 const addItem = (data) => {
   return new Promise((resolve, reject) => {
     db.query(
       "INSERT INTO `Item`(`category_name`, `description`, `image`, `item_name`, `price`, `status`) VALUES (?,?,?,?,?,?)",
-      [data.catagory, data.description, data.image, data.item_name, data.price, data.status],
+      [
+        data.catagory,
+        data.description,
+        data.image,
+        data.item_name,
+        data.price,
+        data.status,
+      ],
       (error, results, fields) => {
         if (!error) {
           resolve(results);
@@ -259,9 +268,23 @@ const addItem = (data) => {
       }
     );
   });
-}
+};
 
-exports.getLastInsertId = getLastInsertId;
-exports.addItem = addItem;
-exports.addToCart = addToCart;
-exports.addVariants = addVariants;
+module.exports = {
+  getProductReport,
+  getLastInsertId,
+  addItem,
+  addToCart,
+  addVariants,
+  getAllItems,
+  getItemsByCategory,
+  getItemByID,
+  getFeedbacksByItemID,
+  getVarientsByItemID,
+  getReplyByFeedbackID,
+  getCartItems,
+  getAllCategories,
+  searchItemsInCategory,
+  deleteCartItem,
+  getCategoryReport
+}
