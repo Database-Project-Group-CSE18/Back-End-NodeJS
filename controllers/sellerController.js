@@ -139,10 +139,25 @@ const getsellerdata = (req, res) => {
             res.json({ success: false, message: err.message });
           });
   }
+  const ChartForSpecificProduct = (req,res)=>{    
+    Seller.chartforspecificproduct(req.body.item_name,req.body.year)
+    .then((success) => {
+            res.statusCode = 200;
+            res.set("Content-Type", "application/json");
+            res.json({ success: true });
+          })
+          .catch((err) => {
+            res.statusCode = 500;
+            res.set("Content-Type", "application/json");
+            console.log("err_msg",err)
+            res.json({ success: false, message: err.message });
+          });
+  }
 
   module.exports = {
     getOverviewAction,
     changePassword,
     insertsellerdata,
-    getsellerdata
+    getsellerdata,
+    ChartForSpecificProduct  
   };

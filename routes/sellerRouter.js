@@ -31,4 +31,8 @@ router.route("/changeSellerDetails")
 router.route("/changeSellerPassword")
     .put(SellerController.changePassword)
 
+   
+router.route("/chartforspecificproduct")
+.get(SellerController.ChartForSpecificProduct) 
+
 module.exports = router;

@@ -292,6 +292,27 @@ const updatePasswordNew = (newpwd, oldpwd, loggedUser) => {
   });
 };
 
+
+const chartforspecificproduct = (item_name,year) => {
+  
+  var query ="UPDATE `order` set `order_status`='paid', `shipped_date`=? Where `order_id`=?" ;
+  var values = [shipped_date,order_id]
+
+  return new Promise((resolve, reject) => {
+    db.query(
+      query,
+      values,
+      (error, results, fields) => {
+        if (!error) {
+          resolve(results);
+        } else {
+          reject(error);
+        }
+      }
+    );
+  });
+}
+
 module.exports = {
   registerCustomer,
   loginUser,
@@ -301,6 +322,7 @@ module.exports = {
   updateUserDetails,
   getOrderNumbers,
   updatePasswordNew,
+  chartforspecificproduct,
   getUserCount,
   getTodayRevenue,
   getTotalRevenue,

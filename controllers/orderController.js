@@ -105,23 +105,27 @@ const getReturnsAction = (req, res) => {
     });
 };
 
-const Feedback = require("../models/orderModel");
+const Feedback = require('../models/orderModel');
+
 
 //should get feedback from request
-const insertFeedbackAction = (req, res) => {
-  console.log(req.body);
-  Feedback.addFeedback(req.body, req.session.user.user_id)
-    .then((success) => {
-      res.statusCode = 200;
-      res.set("Content-Type", "application/json");
-      res.json({ success: true, insertId: success.insertId });
+const insertFeedbackAction = (req,res)=>{
+    console.log(req.body)
+    Feedback.addFeedback(req.body,req.session.user.user_id)
+    .then((success)=>{
+        res.statusCode = 200;
+        res.set("Content-Type", "application/json");
+        res.json({ success: true, insertId:success.insertId});
     })
     .catch((err) => {
-      res.statusCode = 500;
-      res.set("Content-Type", "application/json");
-      res.json({ success: false, message: err });
-    });
-};
+        res.statusCode = 500;
+        res.set("Content-Type", "application/json");
+        res.json({ success: false, message: err });
+      });      
+}
+
+
+
 
 const placeOrderAction = (req, res) => {
   console.log(req.body);
@@ -177,7 +181,7 @@ const MarkAsShipped = (req, res) => {
       res.statusCode = 500;
       res.set("Content-Type", "application/json");
       res.json({ success: false, message: err });
-      console.log(err);
+      console.log(err,"sdgdfgfgjdfnkgjdnfjldfnljg");
     });
 };
 
@@ -325,6 +329,22 @@ const genarateSalesRevenueReportAction = (req, res) => {
       res.status(400);
     });
 };
+const MarkNotAsShipped = (req, res) => {
+  console.log(req.body.order_id)
+  OrderModel.marknotasShipped(req.body.order_id,"")
+    .then((orders) => {
+      res.statusCode = 200;
+      res.set("Content-Type", "application/json");
+      res.json({ success: true, orders: orders });
+    })
+    .catch((err) => {
+      res.statusCode = 500;
+      res.set("Content-Type", "application/json");
+      res.json({ success: false, message: err });
+      console.log(err)
+    });
+};
+
 
 module.exports = {
   genarateSalesRevenueReportAction,
@@ -342,5 +362,9 @@ module.exports = {
   insertFeedbackAction,
   placeOrderAction,
   MarkAsShipped,
+  insertFeedbackAction,
+  placeOrderAction,
+  getOrderDetailsAction,
+  MarkNotAsShipped,
   generateQuaterReportAction,
 };
