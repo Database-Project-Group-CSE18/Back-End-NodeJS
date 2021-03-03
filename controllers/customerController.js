@@ -11,7 +11,6 @@ const authentication = require("../middleware/Authentication");
  ################################################################# */
 
 const registerAction = (req, res) => {
-  console.log("register is called");
   let date_ob = new Date();
   // current date
   // adjust 0 before single digit date
@@ -29,7 +28,7 @@ const registerAction = (req, res) => {
   // prints date in YYYY-MM-DD format
   // console.log(year + "-" + month + "-" + date);
   // prints date & time in YYYY-MM-DD HH:MM:SS format
-  let dateTime = year + "-" + month + "-" + date + " ";
+  let dateTime = year + "-" + month + "-" + date;
 
   const firstName = req.body.firstName;
   const lastName = req.body.lastName;
@@ -80,7 +79,7 @@ const loginAction = (req, res) => {
 
       const id = result[0].user_id;
       const token = jwt.sign({ id }, process.env.TOKEN_SECRET, {
-        expiresIn: 300, //5 minutes
+        expiresIn: 3000 * 24, //50 * 24 minutes
       });
       if (id == 1) {
         Customer.getSellerDetails(email)
@@ -251,7 +250,7 @@ const insertBankCardsAction = (req, res) => {
     .then((success) => {
       res.statusCode = 200;
       res.set("Content-Type", "application/json");
-      res.json({ success: true });
+      res.json({ success: true , insertId: success.insertId});
     })
     .catch((err) => {
       res.statusCode = 500;
@@ -390,12 +389,33 @@ const getOrderStatsAction = (req,res)=>{
  ################################################################# */
 
 const updateOrderStatusAction = (req,res) =>{
-  // console.log(req.body.Order_ID, req.body.Order_status)
+  // console.log("update status", req.body.Order_status)
   Order.updateOrderStatus(req.body.Order_ID, req.body.Order_status)
   .then((stats)=>{
     res.statusCode = 200;
     res.set("Content-Type", "application/json");
     res.json({ success: true});
+})
+.catch((err) => {
+    res.statusCode = 500;
+    res.set("Content-Type", "application/json");
+    res.json({ success: false, message: err });
+  }); 
+}
+
+
+
+/**################################################################
+                          generate order report
+ ################################################################# */
+
+const generateOrderReportAction = (req,res)=>{
+  // console.log("req det",req.body.start_date,req.body.end_date,req.session.user.user_id)
+  Order.generateOrderReport(req.body.start_date,req.body.end_date,req.session.user.user_id)
+  .then((stats)=>{
+    res.statusCode = 200;
+    res.set("Content-Type", "application/json");
+    res.json({ success: true, stats:stats});  //check stats out
 })
 .catch((err) => {
     res.statusCode = 500;
@@ -421,5 +441,6 @@ module.exports = {
   updatePasswordNew,
   getOrderStatsAction,
   getAllOrdersAction,
-  updateOrderStatusAction
+  updateOrderStatusAction,
+  generateOrderReportAction
 };

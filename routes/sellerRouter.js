@@ -1,21 +1,32 @@
-var express = require('express');
-var sellerRouter = express.Router();
-const sellerController = require('../controllers/sellerController');
+var express = require("express");
+const bodyParser = require("body-parser");
+const SellerController = require("../controllers/SellerController");
+var router = express.Router();
+const verifyJWT = require("../middleware/Authentication")
+
+router.use(bodyParser.json());
+
+
+/**################################################################
+                          Customer Model
+ ################################################################# */
+
+router.post("/overview",verifyJWT, SellerController.getOverviewAction);
 
 
 /**################################################################
             Routes for get/put seller details to the DB
  ################################################################# */
  
-sellerRouter.route("/changeSellerDetails")
-    .put(sellerController.insertsellerdata)
-    .get(sellerController.getsellerdata)
+router.route("/changeSellerDetails")
+    .put(SellerController.insertsellerdata)
+    .get(SellerController.getsellerdata)
 
 /**################################################################
             Router for put new password to the DB
  ################################################################# */
  
-sellerRouter.route("/changeSellerPassword")
-    .put(sellerController.changePassword)
+router.route("/changeSellerPassword")
+    .put(SellerController.changePassword)
 
-module.exports = sellerRouter;
+module.exports = router;
