@@ -102,7 +102,7 @@ const placeOrder = (data, userid, date) => {
 const getOrderDetails = (order_id) => {
   return new Promise((resolve, reject) => {
     db.query(
-      "SELECT `Order`.`order_id` AS `order_id`, `Order`.`order_status` AS `order_status`, `Order`.`ordered_date` AS `order_date`, `Order`.`payment_method` AS `payment_method`,`Order`.`ordered_date` AS `ordered_date`,`Order`.`tracking_number` AS `tracking_number`, `Order`.`order_total` AS `order_total`, `OrderAddress`.`first_name` AS `address_firstname`,`OrderAddress`.`last_name` AS `address_lastname`,`OrderAddress`.`state` AS `state`,`OrderAddress`.`city` AS `city`,`OrderAddress`.`street` AS `street`,`OrderAddress`.`zip` AS `zip`,`User`.`email` AS `email`,`User`.`first_name` AS `firstname`,`User`.`last_name` AS `lastname`,`User`.`phone_number` AS `phone_number` FROM `Order` JOIN `OrderAddress` ON `Order`.`order_id` = `OrderAddress`.`address_id` JOIN `User` ON `Order`.`customer_id` = `User`.`user_id` WHERE `Order`.`order_id` = ?",
+      "SELECT `Order`.`order_id` AS `order_id`, `Order`.`order_status` AS `order_status`, `Order`.`ordered_date` AS `order_date`, ``Order`.`payment_method` AS `payment_method`,`Order`.`ordered_date` AS `ordered_date`,`Order`.`tracking_number` AS `tracking_number`, `Order`.`order_total` AS `order_total`, `OrderAddress`.`first_name` AS `address_firstname`,`OrderAddress`.`last_name` AS `address_lastname`,`OrderAddress`.`state` AS `state`,`OrderAddress`.`city` AS `city`,`OrderAddress`.`street` AS `street`,`OrderAddress`.`zip` AS `zip`,`User`.`email` AS `email`,`User`.`first_name` AS `firstname`,`User`.`last_name` AS `lastname`,`User`.`phone_number` AS `phone_number` FROM `Order` JOIN `OrderAddress` ON `Order`.`order_id` = `OrderAddress`.`address_id` JOIN `User` ON `Order`.`customer_id` = `User`.`user_id` WHERE `Order`.`order_id` = ?",
       [order_id],
       (error, results, fields) => {
         if (!error) {
@@ -134,7 +134,7 @@ const getOrderItemsDetails = (order_id) => {
 const getAllSellerOrders = () => {
   return new Promise((resolve, reject) => {
     db.query(
-      "SELECT `order`.`order_id`,`Order`.`order_status`,`user`.`first_name`,`user`.`last_name`,`variant`.`variant_name`,`variant`.`image`,`variant`.`price`, `orderitem`.`quantity`,`item`.`item_name`,`order`.`ordered_date` FROM `order` JOIN `orderitem` ON  `order`.`order_id`=`orderitem`.`order_id` JOIN  `variant` ON `variant`.`variant_id`=`orderitem`.`variant_id`  JOIN `item` ON  `item`.`item_id`=`variant`.`item_id` JOIN `user` ON `user`.`user_id` = `order`.`customer_id` ORDER BY `order`.`ordered_date` DESC",
+      "SELECT `order`.`order_id`,`Order`.`order_status`,`order`.`payment_method`,`order`.`customer_id`,`user`.`first_name`,`user`.`last_name`,`order`.`ordered_date`,`order`.`shipped_date` FROM `order`JOIN `user` ON `order`.`customer_id`=`user`.`user_id` ORDER BY `order`.`order_id`" ,
       (error, results, fields) => {
         if (!error) {
           resolve(results);
@@ -147,10 +147,10 @@ const getAllSellerOrders = () => {
 };
 
 const searchOrders = (order_id) => {
-  console.log(order_id);
-  var query =
-    "SELECT `order`.`order_id`,`Order`.`order_status`,`user`.`first_name`,`user`.`last_name`,`variant`.`variant_name`,`variant`.`image`,`variant`.`price`, `orderitem`.`quantity`,`item`.`item_name`,`order`.`ordered_date` FROM `order` JOIN `orderitem` ON  `order`.`order_id`=`orderitem`.`order_id` JOIN  `variant` ON `variant`.`variant_id`=`orderitem`.`variant_id`  JOIN `item` ON  `item`.`item_id`=`variant`.`item_id` JOIN `user` ON `user`.`user_id` = `order`.`customer_id` WHERE `order`.`order_id` LIKE ? ORDER BY `order`.`ordered_date` DESC";
-  var values = ["%" + order_id + "%"];
+  console.log(order_id)
+  var query ="SELECT `order`.`order_id`,`Order`.`order_status`,`order`.`payment_method`,`order`.`customer_id`,`user`.`first_name`,`user`.`last_name`,`order`.`ordered_date`,`order`.`shipped_date` FROM `order`JOIN `user` ON `order`.`customer_id`=`user`.`user_id`Where `order`.`order_id` LIKE ? ORDER BY `order`.`order_id`" 
+  var values = ['%'+order_id+'%']
+ 
 
   return new Promise((resolve, reject) => {
     db.query(query, values, (error, results, fields) => {
@@ -163,9 +163,10 @@ const searchOrders = (order_id) => {
   });
 };
 const getAwaitingShipments = () => {
+  console.log("dasdadfsdfsdfsdf")
   return new Promise((resolve, reject) => {
     db.query(
-      "SELECT `order`.`order_id`,`user`.`first_name`,`Order`.`order_status`,`user`.`last_name`,`variant`.`variant_name`,`variant`.`image`,`variant`.`price`, `orderitem`.`quantity`,`item`.`item_name`,`order`.`ordered_date` FROM `order` JOIN `orderitem` ON  `order`.`order_id`=`orderitem`.`order_id` JOIN  `variant` ON `variant`.`variant_id`=`orderitem`.`variant_id`  JOIN `item` ON  `item`.`item_id`=`variant`.`item_id` JOIN `user` ON `user`.`user_id` = `order`.`customer_id` WHERE `order`.`order_status`='paid' ORDER BY `order`.`ordered_date` DESC",
+      "SELECT `order`.`order_id`,`Order`.`order_status`,`order`.`payment_method`,`order`.`customer_id`,`user`.`first_name`,`user`.`last_name`,`order`.`ordered_date`,`order`.`shipped_date` FROM `order`JOIN `user` ON `order`.`customer_id`=`user`.`user_id` WHERE `order`.`order_status`='paid' ORDER BY `order`.`order_id`",
       (error, results, fields) => {
         if (!error) {
           resolve(results);
@@ -179,7 +180,7 @@ const getAwaitingShipments = () => {
 const getAwaitingDeliveries = () => {
   return new Promise((resolve, reject) => {
     db.query(
-      "SELECT `order`.`order_id`,`user`.`first_name`,`Order`.`order_status`,`user`.`last_name`,`variant`.`variant_name`,`variant`.`image`,`variant`.`price`, `orderitem`.`quantity`,`item`.`item_name`,`order`.`ordered_date` FROM `order` JOIN `orderitem` ON  `order`.`order_id`=`orderitem`.`order_id` JOIN  `variant` ON `variant`.`variant_id`=`orderitem`.`variant_id`  JOIN `item` ON  `item`.`item_id`=`variant`.`item_id` JOIN `user` ON `user`.`user_id` = `order`.`customer_id` WHERE `order_status`='shipped' ORDER BY `order`.`ordered_date` DESC",
+      "SELECT `order`.`order_id`,`Order`.`order_status`,`order`.`payment_method`,`order`.`customer_id`,`user`.`first_name`,`user`.`last_name`,`order`.`ordered_date`,`order`.`shipped_date` FROM `order`JOIN `user` ON `order`.`customer_id`=`user`.`user_id` WHERE `order`.`order_status`='shipped' ORDER BY `order`.`order_id`" ,      
       (error, results, fields) => {
         if (!error) {
           resolve(results);
@@ -193,7 +194,7 @@ const getAwaitingDeliveries = () => {
 const getCancellations = () => {
   return new Promise((resolve, reject) => {
     db.query(
-      "SELECT `order`.`order_id`,`user`.`first_name`,`Order`.`order_status`,`user`.`last_name`,`variant`.`variant_name`,`variant`.`image`,`variant`.`price`, `orderitem`.`quantity`,`item`.`item_name`,`order`.`ordered_date` FROM `order` JOIN `orderitem` ON  `order`.`order_id`=`orderitem`.`order_id` JOIN  `variant` ON `variant`.`variant_id`=`orderitem`.`variant_id`  JOIN `item` ON  `item`.`item_id`=`variant`.`item_id` JOIN `user` ON `user`.`user_id` = `order`.`customer_id` WHERE `order_status`='cancelled' ORDER BY `order`.`ordered_date` DESC",
+      "SELECT `order`.`order_id`,`Order`.`order_status`,`order`.`payment_method`,`order`.`customer_id`,`user`.`first_name`,`user`.`last_name`,`order`.`ordered_date`,`order`.`shipped_date` FROM `order`JOIN `user` ON `order`.`customer_id`=`user`.`user_id` WHERE `order`.`order_status`='cancelled' ORDER BY `order`.`order_id`" ,      
       (error, results, fields) => {
         if (!error) {
           resolve(results);
@@ -207,7 +208,7 @@ const getCancellations = () => {
 const getReturns = () => {
   return new Promise((resolve, reject) => {
     db.query(
-      "SELECT `order`.`order_id`,`user`.`first_name`,`Order`.`order_status`,`user`.`last_name`,`variant`.`variant_name`,`variant`.`image`,`variant`.`price`, `orderitem`.`quantity`,`item`.`item_name`,`order`.`ordered_date` FROM `order` JOIN `orderitem` ON  `order`.`order_id`=`orderitem`.`order_id` JOIN  `variant` ON `variant`.`variant_id`=`orderitem`.`variant_id`  JOIN `item` ON  `item`.`item_id`=`variant`.`item_id` JOIN `user` ON `user`.`user_id` = `order`.`customer_id` WHERE `order_status`='returned' ORDER BY `order`.`ordered_date` DESC",
+      "SELECT `order`.`order_id`,`Order`.`order_status`,`order`.`payment_method`,`order`.`customer_id`,`user`.`first_name`,`user`.`last_name`,`order`.`ordered_date`,`order`.`shipped_date` FROM `order`JOIN `user` ON `order`.`customer_id`=`user`.`user_id` WHERE `order`.`order_status`='returned' ORDER BY `order`.`order_id`" ,      
       (error, results, fields) => {
         if (!error) {
           resolve(results);
@@ -221,7 +222,7 @@ const getReturns = () => {
 const getReceived = () => {
   return new Promise((resolve, reject) => {
     db.query(
-      "SELECT `order`.`order_id`,`user`.`first_name`,`Order`.`order_status`,`user`.`last_name`,`variant`.`variant_name`,`variant`.`image`,`variant`.`price`, `orderitem`.`quantity`,`item`.`item_name`,`order`.`ordered_date` FROM `order` JOIN `orderitem` ON  `order`.`order_id`=`orderitem`.`order_id` JOIN  `variant` ON `variant`.`variant_id`=`orderitem`.`variant_id`  JOIN `item` ON  `item`.`item_id`=`variant`.`item_id` JOIN `user` ON `user`.`user_id` = `order`.`customer_id` WHERE `order_status`='delivered' ORDER BY `order`.`ordered_date` DESC",
+      "SELECT `order`.`order_id`,`Order`.`order_status`,`order`.`payment_method`,`order`.`customer_id`,`user`.`first_name`,`user`.`last_name`,`order`.`ordered_date`,`order`.`shipped_date` FROM `order`JOIN `user` ON `order`.`customer_id`=`user`.`user_id` WHERE `order`.`order_status`='delivered' ORDER BY `order`.`order_id`" ,      
       (error, results, fields) => {
         if (!error) {
           resolve(results);
@@ -267,6 +268,26 @@ const generateOrderReport = (start_date, end_date, user_id) => {
     );
   });
 };
+const marknotasShipped = (order_id,shipped_date) => {
+  
+  var query ="UPDATE `order` set `order_status`='paid', `shipped_date`=? Where `order_id`=?" ;
+  var values = [shipped_date,order_id]
+
+  return new Promise((resolve, reject) => {
+    db.query(
+      query,
+      values,
+      (error, results, fields) => {
+        if (!error) {
+          resolve(results);
+        } else {
+          reject(error);
+        }
+      }
+    );
+  });
+};
+
 
 //generate quarter report details     check this out
 
@@ -330,9 +351,10 @@ module.exports = {
   getOrderStats,
   getAllSellerOrders,
   placeOrder,
+  marknotasShipped,
+  markasShipped,
   generateOrderReport,
   generateQuarterReport,
-  markasShipped,
   getOrderDetails,
   getOrderItemsDetails,
   getAllItems,

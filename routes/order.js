@@ -38,6 +38,8 @@ orderRouter.route("/delivered")
 orderRouter.route("/markasshipped")
   .post(orderController.MarkAsShipped);
 
+  orderRouter.route("/marknotasshipped")
+  .post(orderController.MarkNotAsShipped);
 orderRouter.post("/generatequaterreport",orderController.generateQuaterReportAction);
 
 orderRouter.post("/generatesalesrevenuereport",orderController.genarateSalesRevenueReportAction);
