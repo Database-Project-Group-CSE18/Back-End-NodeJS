@@ -102,7 +102,7 @@ const placeOrder = (data, userid, date) => {
 const getOrderDetails = (order_id) => {
   return new Promise((resolve, reject) => {
     db.query(
-      "SELECT `Order`.`order_id` AS `order_id`, `Order`.`order_status` AS `order_status`, `Order`.`ordered_date` AS `order_date`, ``Order`.`payment_method` AS `payment_method`,`Order`.`ordered_date` AS `ordered_date`,`Order`.`tracking_number` AS `tracking_number`, `Order`.`order_total` AS `order_total`, `OrderAddress`.`first_name` AS `address_firstname`,`OrderAddress`.`last_name` AS `address_lastname`,`OrderAddress`.`state` AS `state`,`OrderAddress`.`city` AS `city`,`OrderAddress`.`street` AS `street`,`OrderAddress`.`zip` AS `zip`,`User`.`email` AS `email`,`User`.`first_name` AS `firstname`,`User`.`last_name` AS `lastname`,`User`.`phone_number` AS `phone_number` FROM `Order` JOIN `OrderAddress` ON `Order`.`order_id` = `OrderAddress`.`address_id` JOIN `User` ON `Order`.`customer_id` = `User`.`user_id` WHERE `Order`.`order_id` = ?",
+      "SELECT `Order`.`order_id` AS `order_id`, `Order`.`order_status` AS `order_status`, `Order`.`ordered_date` AS `order_date`, `Order`.`payment_method` AS `payment_method`,`Order`.`ordered_date` AS `ordered_date`,`Order`.`tracking_number` AS `tracking_number`, `Order`.`order_total` AS `order_total`, `OrderAddress`.`first_name` AS `address_firstname`,`OrderAddress`.`last_name` AS `address_lastname`,`OrderAddress`.`state` AS `state`,`OrderAddress`.`city` AS `city`,`OrderAddress`.`street` AS `street`,`OrderAddress`.`zip` AS `zip`,`User`.`email` AS `email`,`User`.`first_name` AS `firstname`,`User`.`last_name` AS `lastname`,`User`.`phone_number` AS `phone_number` FROM `Order` JOIN `OrderAddress` ON `Order`.`order_id` = `OrderAddress`.`address_id` JOIN `User` ON `Order`.`customer_id` = `User`.`user_id` WHERE `Order`.`order_id` = ?",
       [order_id],
       (error, results, fields) => {
         if (!error) {
@@ -292,7 +292,8 @@ const marknotasShipped = (order_id,shipped_date) => {
 //generate quarter report details     check this out
 
 const generateQuarterReport = (start_date, end_date) => {
-  const query ="SELECT `Item`.`item_id`as item_id, sum(`Order`.`order_total`) as sales from `Order`,`OrderItem`,Variant, Item where `OrderItem`.variant_id = Variant.variant_id and Variant.item_id = Item.item_id and `Order`.`order_id` = `OrderItem`.`order_id` and `Order`.`ordered_date` BETWEEN ? AND ?  group by `Item`.`item_id`";
+  const query =
+    "SELECT `Item`.`item_id`as item_id, sum(`Order`.`order_total`) as sales from `Order`,`OrderItem`,Variant, Item where `OrderItem`.variant_id = Variant.variant_id and Variant.item_id = Item.item_id and `Order`.`order_id` = `OrderItem`.`order_id` and `Order`.`ordered_date` BETWEEN ? AND ?  group by `Item`.`item_id` ORDER BY `Item`.`item_id`";
   return new Promise((resolve, reject) => {
     db.query(query, [start_date, end_date], (error, results, fields) => {
       if (!error) {

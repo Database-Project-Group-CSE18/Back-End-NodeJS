@@ -189,17 +189,17 @@ const MarkAsShipped = (req, res) => {
 
 const generateQuaterReportAction = (req, res) => {
   let year = req.body.year;
-  let firstQuarterStartDate = year + "/01/01";
-  let firstQuarterEndDate = year + "/03/31";
+  let firstQuarterStartDate = year + "-01-01";
+  let firstQuarterEndDate = year + "-03-31";
 
-  let secondQaurterStartDate = year + "/04/01";
-  let secondQaurterEndDate = year + "/06/30";
+  let secondQaurterStartDate = year + "-04-01";
+  let secondQaurterEndDate = year + "-06-30";
 
-  let thirdQuarterStartDate = year + "/07/01";
-  let thirdQuarterEndDate = year + "/09/30";
+  let thirdQuarterStartDate = year + "-07-01";
+  let thirdQuarterEndDate = year + "-09-30";
 
-  let fourthQuarterStartDate = year + "/10/01";
-  let fourthQuarterEndDate = year + "12/31";
+  let fourthQuarterStartDate = year + "-10-01";
+  let fourthQuarterEndDate = year + "12-31";
 
   let first_quart_det;
   let second_quart_det;
